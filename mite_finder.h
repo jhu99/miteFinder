@@ -1,6 +1,6 @@
 //
 //  mite_finder.h
-//  
+//
 //
 //  Created by Jialu Hu on 16/10/9.
 //
@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <vector>
 #include <list>
+#include <cmath>
 #include <fstream>
 #include "variable.h"
 #include "mite.h"
@@ -88,7 +89,7 @@ bool search_seed(std::vector<int>* v1,
         for(i2=v2->begin();i2!=v2->end();i2++) {
             int p1=*i1;
             int p2=*i2;
-            if(abs(p1-p2)<k) continue;
+            if(std::abs(p1-p2)<k) continue;
             if(p2>p1) {
                 if((p2-p1)>(MAX_LENGTH_MITE-k)) break;
                 seedset.push_back(Seed(p1,p1+k-1,p2,p2+k-1));
@@ -131,24 +132,32 @@ bool check_mite_structure(Seed& sd, const char* pchr) {
         return false;
     if((sd.pos4-sd.pos1+1)<MIN_LENGTH_MITE)
         return false;
-    int st1,st2,tsd;
+    int st1,st2,tir,tsd,GCnum=0,tsdlen=0;;
+    double rate;
+    for (tir=sd.pos1;tir<=sd.pos2;tir++){
+        if (pchr[tir]=='G'||pchr[tir]=='C')
+            GCnum++;
+    }
+    rate=((double)GCnum/(double)(sd.pos2-sd.pos1+1));
+    if (rate<0.2)
+        return false;
     for(tsd=MIN_LENGTH_TSD;tsd<=MAX_LENGTH_TSD;tsd++) {
         st1=sd.pos1-tsd;
         st2=sd.pos4+1;
         while (pchr[st1]==pchr[st2]) {
             st1++;
             st2++;
-            if(st1==sd.pos1) {
-                sd.tsd=tsd;
-                if(tsd==2){
-                    if(pchr[sd.pos1-1]!='A'||pchr[sd.pos1-2]!='T')
-                        return false;
-                }
-                return true;
-            }
         }
+        if (st1>=sd.pos1)
+            tsdlen=tsd;
     }
-    return false;
+    if (tsdlen==2){
+        if (pchr[sd.pos1-1]!='A'||pchr[sd.pos1-2]!='T')
+            return false;
+    }
+    sd.tsd=tsdlen;
+    if (tsdlen) return true;
+    else return false;
 }
 
 bool write_seed(Seed_set& tset,
@@ -212,6 +221,8 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
                 break;
             }
         }
+        if (it->pos1==176754)
+            int a=0;
         // Check tsd and mite structure.
         if(!check_mite_structure(*it,pchr)){
             it=tset.erase(it);
@@ -231,6 +242,7 @@ bool mite_finder(Seed_set& seedset,
   Tir_map tmap;
   char* pCurr = pChr;
   int pos = 0;
+  int shu=0;
   while(pos<len) {
     int remainder=std::strlen(pCurr);
     std::string fragment;
@@ -241,7 +253,9 @@ bool mite_finder(Seed_set& seedset,
     }else {
       fragment=std::string(pCurr,fragLen);
       build_kmer_index(tmap,fragment,pos,k);
-      pos += fragLen-MAX_LENGTH_MITE; 
+      pos += fragLen-MAX_LENGTH_MITE;
+      shu++;
+      std::cout << shu <<std::endl;
     }
     extract_seed_from_map(tmap,seedset,k);
     clearMap(tmap);
