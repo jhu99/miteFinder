@@ -32,11 +32,29 @@ bool clearMap(Tir_map& tmap) {
   return true;
 }
 
-std::string inverse_repeat(std::string key) {
+std::string inverse_repeat(std::string key,int base,int pos) {
     std::string invkey;
     int len=key.length();
     for(int i=len-1;i>=0;i--) {
-        switch (key[i]) {
+        if (i==pos){
+            switch (base) {
+            case 0:
+                invkey += 'T';
+                break;
+            case 1:
+                invkey += 'A';
+                break;
+            case 2:
+                invkey += 'G';
+                break;
+            case 3:
+                invkey += 'C';
+                break;
+            }
+        }
+        else
+        {
+            switch (key[i]) {
             case 'A':
                 invkey += 'T';
                 break;
@@ -52,6 +70,7 @@ std::string inverse_repeat(std::string key) {
             case 'N':
                 invkey += 'N';
                 break;
+            }
         }
     }
     return invkey;
@@ -112,16 +131,19 @@ bool extract_seed_from_map(Tir_map& tmap,
     for(auto it=tmap.begin();it!=tmap.end();++it)
     {
         key=it->first;
-        invkey=inverse_repeat(key);
-        if(record_map.find(key)!=record_map.end()) continue;
-        else{
-            record_map[key]=1;
-            record_map[invkey]=1;
+        for (int i=0;i<4;i++)
+        for (int j=0;j<10;j++)
+        {
+            invkey=inverse_repeat(key,i,j);
+            if(record_map.find(key)!=record_map.end()) continue;
+            else{
+               record_map[key]=1;
+            }
+            if(tmap.find(invkey)==tmap.end())continue;
+            v1=it->second;
+            v2=tmap.at(invkey);
+            search_seed(v1,v2,tset,k);
         }
-        if(tmap.find(invkey)==tmap.end())continue;
-        v1=it->second;
-        v2=tmap.at(invkey);
-        search_seed(v1,v2,tset,k);
     }
   return true;
 }
@@ -221,15 +243,13 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
                 break;
             }
         }
-        if (it->pos1==176754)
-            int a=0;
         // Check tsd and mite structure.
         if(!check_mite_structure(*it,pchr)){
             it=tset.erase(it);
         }
-         else{
+        else{
              it++;
-         }
+        }
     }
     return true;
 }
@@ -242,7 +262,6 @@ bool mite_finder(Seed_set& seedset,
   Tir_map tmap;
   char* pCurr = pChr;
   int pos = 0;
-  int shu=0;
   while(pos<len) {
     int remainder=std::strlen(pCurr);
     std::string fragment;
@@ -254,8 +273,6 @@ bool mite_finder(Seed_set& seedset,
       fragment=std::string(pCurr,fragLen);
       build_kmer_index(tmap,fragment,pos,k);
       pos += fragLen-MAX_LENGTH_MITE;
-      shu++;
-      std::cout << shu <<std::endl;
     }
     extract_seed_from_map(tmap,seedset,k);
     clearMap(tmap);
