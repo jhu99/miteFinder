@@ -12,6 +12,7 @@ public:
     int pos3;
     int pos4;
     int tsd;
+    int mismatch_tir;
     Seed()
     {
         this->pos1=1;
