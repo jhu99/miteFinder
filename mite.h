@@ -24,13 +24,15 @@ public:
     Seed(int p1,
          int p2,
          int p3,
-         int p4)
+         int p4,
+         int mis)
     {
         this->pos1=p1;
         this->pos2=p2;
         this->pos3=p3;
         this->pos4=p4;
-        this->tsd=0;
+        this->tsd=0;this->mismatch_tir=mis;
+        this->mismatch_tir=mis;
     }
     ~Seed(){}
     bool operator<(const Seed& other) const
