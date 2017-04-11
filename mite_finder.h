@@ -102,6 +102,7 @@ bool build_kmer_index(Tir_map& tirmap,
 bool search_seed(std::vector<int>* v1,
                  std::vector<int>* v2,
                  Seed_set& seedset,
+                 int mis_tir,
                  int k=10) {
     std::vector<int>::iterator i1,i2;
     for(i1=v1->begin();i1!=v1->end();i1++) {
@@ -111,11 +112,11 @@ bool search_seed(std::vector<int>* v1,
             if(std::abs(p1-p2)<k) continue;
             if(p2>p1) {
                 if((p2-p1)>(MAX_LENGTH_MITE-k)) break;
-                seedset.push_back(Seed(p1,p1+k-1,p2,p2+k-1));
+                seedset.push_back(Seed(p1,p1+k-1,p2,p2+k-1,mis_tir));
             }else
             {
                 if((p1-p2)>(MAX_LENGTH_MITE-k)) continue;
-                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1));
+                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir));
             }
         }
     }
@@ -125,12 +126,13 @@ bool search_seed(std::vector<int>* v1,
 bool extract_seed_from_map(Tir_map& tmap,
                            Seed_set& tset,
                            int k=10) {
-    std::string key,invkey;
+    std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
     std::unordered_map<std::string, int> record_map;
     for(auto it=tmap.begin();it!=tmap.end();++it)
     {
         key=it->first;
+        standinvkey=inverse_repeat(key,0,10);
         for (int i=0;i<4;i++)
         for (int j=0;j<10;j++)
         {
@@ -142,7 +144,10 @@ bool extract_seed_from_map(Tir_map& tmap,
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
-            search_seed(v1,v2,tset,k);
+            if (invkey==standinvkey)
+            search_seed(v1,v2,tset,0,k);
+            else
+            search_seed(v1,v2,tset,1,k);
         }
     }
   return true;
@@ -150,6 +155,8 @@ bool extract_seed_from_map(Tir_map& tmap,
 
 bool check_mite_structure(Seed& sd, const char* pchr) {
     // Check the mite structure.
+    if (sd.mismatch_tir>MAX_MISMATCH_TIR)
+        return false;
     if(sd.pos3<=sd.pos2)
         return false;
     if((sd.pos4-sd.pos1+1)<MIN_LENGTH_MITE)
@@ -232,9 +239,14 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
         tmp+=one;
         sit=it;
         sit++;
+        if (it->pos1==1353)
+            int duandian=0;
         while(sit!=tset.end()){
-            if(tmp==(*sit)){
+            if(tmp.pos1==sit->pos1&&tmp.pos2==sit->pos2&&tmp.pos3==sit->pos3&&tmp.pos4==sit->pos4){
+                std::cout<< it->pos1 << it->pos2 << it->pos3 << it->pos4 <<std::endl;
                 (*it)+=1;
+                std::cout<< it->pos1 << it->pos2 << it->pos3 << it->pos4 <<std::endl;
+                //it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
                 tmp+=one;
                 sit=tset.erase(sit);
             }else if((*sit)<tmp){
