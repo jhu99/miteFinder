@@ -83,7 +83,7 @@ bool build_kmer_index(Tir_map& tirmap,
 {
     int len=fragment.length();
     if(len<k) return false;
-    for(int i=0;i<len-k;i++)
+    for(int i=0;i<=len-k;i++)
     {
         std::string key=fragment.substr(i,k);
         if(tirmap.find(key)!=tirmap.end())
@@ -133,14 +133,14 @@ bool extract_seed_from_map(Tir_map& tmap,
     {
         key=it->first;
         standinvkey=inverse_repeat(key,0,10);
+        if(record_map.find(key)!=record_map.end()) continue;
+        else{
+            record_map[key]=1;
+        }
         for (int i=0;i<4;i++)
-        for (int j=0;j<10;j++)
+        for (int j=1;j<9;j++)
         {
             invkey=inverse_repeat(key,i,j);
-            if(record_map.find(key)!=record_map.end()) continue;
-            else{
-               record_map[key]=1;
-            }
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
@@ -240,7 +240,7 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
         sit=it;
         sit++;
         while(sit!=tset.end()){
-            if(tmp.pos1==sit->pos1&&tmp.pos2==sit->pos2&&tmp.pos3==sit->pos3&&tmp.pos4==sit->pos4){
+            if(tmp==(*sit)){
                 (*it)+=1;
                 it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
                 tmp+=one;
