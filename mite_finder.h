@@ -239,14 +239,10 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
         tmp+=one;
         sit=it;
         sit++;
-        if (it->pos1==1353)
-            int duandian=0;
         while(sit!=tset.end()){
             if(tmp.pos1==sit->pos1&&tmp.pos2==sit->pos2&&tmp.pos3==sit->pos3&&tmp.pos4==sit->pos4){
-                std::cout<< it->pos1 << it->pos2 << it->pos3 << it->pos4 <<std::endl;
                 (*it)+=1;
-                std::cout<< it->pos1 << it->pos2 << it->pos3 << it->pos4 <<std::endl;
-                //it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
+                it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
                 tmp+=one;
                 sit=tset.erase(sit);
             }else if((*sit)<tmp){
