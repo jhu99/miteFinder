@@ -152,10 +152,28 @@ bool extract_seed_from_map(Tir_map& tmap,
     }
   return true;
 }
-
+bool check_tir(Seed& sd,const char* pchr)
+{
+    int mis_match=0;
+    for (int i=0;i<=(sd.pos2-sd.pos1);i++)
+    {
+         if (pchr[sd.pos1+i]=='A'&&pchr[sd.pos4-i]!='T')
+            mis_match++;
+         if (pchr[sd.pos1+i]=='T'&&pchr[sd.pos4-i]!='A')
+            mis_match++;
+         if (pchr[sd.pos1+i]=='G'&&pchr[sd.pos4-i]!='C')
+            mis_match++;
+         if (pchr[sd.pos1+i]=='C'&&pchr[sd.pos4-i]!='G')
+            mis_match++;
+    }
+    if (mis_match<=1)
+    return true;
+    else
+    return false;
+}
 bool check_mite_structure(Seed& sd, const char* pchr) {
     // Check the mite structure.
-    if (sd.mismatch_tir>MAX_MISMATCH_TIR)
+    if (!check_tir(sd,pchr))
         return false;
     if(sd.pos3<=sd.pos2)
         return false;
@@ -198,7 +216,7 @@ bool write_seed(Seed_set& tset,
     int start,end,distance;
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
-        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<std::endl;
+        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<60<<std::endl;
         start=it->pos1-it->tsd;
         end=it->pos4+it->tsd+1;
         ps=pchr+start;
