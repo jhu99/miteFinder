@@ -13,6 +13,7 @@ public:
     int pos4;
     int tsd;
     int mismatch_tir;
+    int mis_tirpos;
     Seed()
     {
         this->pos1=1;
@@ -25,14 +26,16 @@ public:
          int p2,
          int p3,
          int p4,
-         int mis)
+         int mis,
+         int pos)
     {
         this->pos1=p1;
         this->pos2=p2;
         this->pos3=p3;
         this->pos4=p4;
-        this->tsd=0;this->mismatch_tir=mis;
+        this->tsd=0;
         this->mismatch_tir=mis;
+        this->mis_tirpos=pos;
     }
     ~Seed(){}
     bool operator<(const Seed& other) const
