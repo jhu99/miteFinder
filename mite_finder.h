@@ -20,12 +20,12 @@
 #include "mite.h"
 
 // Hash map for kmer index.
-typedef std::unordered_map<std::string,std::vector<int>* > Tir_map;
+typedef std::unordered_map<std::string,std::vector<int>*> Tir_map;
 // Data type for a set of seeds detected from chromosomes.
 typedef std::list<Seed> Seed_set;
 
 bool clearMap(Tir_map& tmap) {
-  for(auto it=tmap.begin(); it!=tmap.end(); ++it){
+  for(auto it=tmap.begin();it!=tmap.end();++it){
     delete it->second;
   }
   tmap.clear();
@@ -103,6 +103,7 @@ bool search_seed(std::vector<int>* v1,
                  std::vector<int>* v2,
                  Seed_set& seedset,
                  int mis_tir,
+                 int mis_tirpos,
                  int k=10) {
     std::vector<int>::iterator i1,i2;
     for(i1=v1->begin();i1!=v1->end();i1++) {
@@ -112,11 +113,11 @@ bool search_seed(std::vector<int>* v1,
             if(std::abs(p1-p2)<k) continue;
             if(p2>p1) {
                 if((p2-p1)>(MAX_LENGTH_MITE-k)) break;
-                seedset.push_back(Seed(p1,p1+k-1,p2,p2+k-1,mis_tir));
+                seedset.push_back(Seed(p1,p1+k-1,p2,p2+k-1,mis_tir,p1+mis_tirpos));
             }else
             {
                 if((p1-p2)>(MAX_LENGTH_MITE-k)) continue;
-                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir));
+                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+9-mis_tirpos));
             }
         }
     }
@@ -145,36 +146,16 @@ bool extract_seed_from_map(Tir_map& tmap,
             v1=it->second;
             v2=tmap.at(invkey);
             if (invkey==standinvkey)
-            search_seed(v1,v2,tset,0,k);
+            search_seed(v1,v2,tset,0,j,k);
             else
-            search_seed(v1,v2,tset,1,k);
+            search_seed(v1,v2,tset,1,j,k);
         }
     }
   return true;
 }
-bool check_tir(Seed& sd,const char* pchr)
-{
-    int mis_match=0;
-    for (int i=0;i<=(sd.pos2-sd.pos1);i++)
-    {
-         if (pchr[sd.pos1+i]=='A'&&pchr[sd.pos4-i]!='T')
-            mis_match++;
-         if (pchr[sd.pos1+i]=='T'&&pchr[sd.pos4-i]!='A')
-            mis_match++;
-         if (pchr[sd.pos1+i]=='G'&&pchr[sd.pos4-i]!='C')
-            mis_match++;
-         if (pchr[sd.pos1+i]=='C'&&pchr[sd.pos4-i]!='G')
-            mis_match++;
-    }
-    if (mis_match<=1)
-    return true;
-    else
-    return false;
-}
+
 bool check_mite_structure(Seed& sd, const char* pchr) {
     // Check the mite structure.
-    if (!check_tir(sd,pchr))
-        return false;
     if(sd.pos3<=sd.pos2)
         return false;
     if((sd.pos4-sd.pos1+1)<MIN_LENGTH_MITE)
@@ -259,8 +240,18 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
         sit++;
         while(sit!=tset.end()){
             if(tmp==(*sit)){
+                //it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
+                 if (it->mismatch_tir==0&&sit->mismatch_tir==1)
+                 {
+                     it->mismatch_tir=sit->mismatch_tir;
+                     it->mis_tirpos=sit->mis_tirpos;
+                 }
+                 else if (it->mismatch_tir==0&&sit->mismatch_tir==1)
+                 {
+                     if (it->mis_tirpos!=sit->mis_tirpos)
+                        break;
+                 }
                 (*it)+=1;
-                it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
                 tmp+=one;
                 sit=tset.erase(sit);
             }else if((*sit)<tmp){
