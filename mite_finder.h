@@ -246,7 +246,7 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
                      it->mismatch_tir=sit->mismatch_tir;
                      it->mis_tirpos=sit->mis_tirpos;
                  }
-                 else if (it->mismatch_tir==0&&sit->mismatch_tir==1)
+                 else if (it->mismatch_tir==1&&sit->mismatch_tir==1)
                  {
                      if (it->mis_tirpos!=sit->mis_tirpos)
                         break;
