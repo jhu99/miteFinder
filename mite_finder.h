@@ -18,6 +18,7 @@
 #include <fstream>
 #include "variable.h"
 #include "mite.h"
+#include "genome.h"
 
 // Hash map for kmer index.
 typedef std::unordered_map<std::string,std::vector<int>*> Tir_map;
@@ -192,14 +193,23 @@ bool write_seed(Seed_set& tset,
                 char* pchr,
                 std::fstream& output,
                 int chr,
+                int chrlen,
                 int maxcol=60){
     char* ps=pchr;
     int start,end,distance;
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
         << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<60<<std::endl;
-        start=it->pos1-it->tsd;
-        end=it->pos4+it->tsd+1;
+        if (it->pos1<60||it->pos4+60>=chrlen)
+        {
+            start=it->pos1-it->tsd;
+            end=it->pos4+it->tsd+1;
+        }
+        else
+        {
+            start=it->pos1-it->tsd-60;
+            end=it->pos4+it->tsd+61;
+        }
         ps=pchr+start;
         while(start<end){
             distance=end-start;
@@ -240,7 +250,6 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
         sit++;
         while(sit!=tset.end()){
             if(tmp==(*sit)){
-                //it->mismatch_tir=it->mismatch_tir+sit->mismatch_tir;
                  if (it->mismatch_tir==0&&sit->mismatch_tir==1)
                  {
                      it->mismatch_tir=sit->mismatch_tir;

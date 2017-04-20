@@ -22,6 +22,7 @@ public:
   void readGenome(std::string path_to_file);
   int getNumChrom();
   char* getChrom(int);
+  int getSizeChrom(int);
 };
 
 #endif
