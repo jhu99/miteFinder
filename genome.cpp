@@ -17,7 +17,7 @@ void Genome::readGenome(std::string path_to_file)
 {
   std::ifstream input(path_to_file.c_str());
   std::string line;
-  int mark,count,linenum;
+  int mark=0,count,linenum;
   linenum=0;
   while(std::getline(input,line))
   {
@@ -38,12 +38,12 @@ void Genome::readGenome(std::string path_to_file)
     {
       if(line.length()>(unsigned)this->maxLength)
       {
-        this->maxLength=line.length();
+        this->maxLength=(int)line.length();
       }
     }
   }
   this->sizeChrom.push_back(linenum-mark);
-  this->numChrom=this->sizeChrom.size();
+  this->numChrom=(int)this->sizeChrom.size();
   input.clear();
   input.seekg(0,input.beg);
   count=-1;
