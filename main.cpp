@@ -12,13 +12,13 @@
 #include "mite_finder.h"
 
 int main(int argc, const char * argv[]) {
-    std::string filename="OSgenomeV6.1";
+    std::string filename="./OSgenomeV6.man";
     Genome osgenome;
     osgenome.readGenome(filename);
     int numChr=osgenome.getNumChrom();
     Seed_set tset;
     std::fstream output;
-    output.open("mite_candidates.fsa",std::ios_base::out);
+    output.open("./mite_candidates.fsa",std::ios_base::out);
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
         int chrlen=osgenome.getSizeChrom(i);

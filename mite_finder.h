@@ -118,7 +118,7 @@ bool search_seed(std::vector<int>* v1,
             }else
             {
                 if((p1-p2)>(MAX_LENGTH_MITE-k)) continue;
-                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+9-mis_tirpos));
+                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+k-1-mis_tirpos));
             }
         }
     }
@@ -140,7 +140,7 @@ bool extract_seed_from_map(Tir_map& tmap,
             record_map[key]=1;
         }
         for (int i=0;i<4;i++)
-        for (int j=1;j<9;j++)
+        for (int j=1;j<(MIN_LENGTH_TIR-1);j++)
         {
             invkey=inverse_repeat(key,i,j);
             if(tmap.find(invkey)==tmap.end())continue;
