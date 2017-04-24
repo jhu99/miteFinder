@@ -118,7 +118,7 @@ bool search_seed(std::vector<int>* v1,
             }else
             {
                 if((p1-p2)>(MAX_LENGTH_MITE-k)) continue;
-                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+k-1-mis_tirpos));
+                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+9-mis_tirpos));
             }
         }
     }
@@ -135,14 +135,18 @@ bool extract_seed_from_map(Tir_map& tmap,
     {
         key=it->first;
         standinvkey=inverse_repeat(key,0,10);
-        if(record_map.find(key)!=record_map.end()) continue;
-        else{
-            record_map[key]=1;
-        }
         for (int i=0;i<4;i++)
-        for (int j=1;j<(MIN_LENGTH_TIR-1);j++)
+        for (int j=1;j<9;j++)
         {
             invkey=inverse_repeat(key,i,j);
+            std::string signkey,invsignkey;
+            signkey=signkey+key+invkey;
+            invsignkey=invsignkey+invkey+key;
+            if (record_map.find(signkey)!=record_map.end()) continue;
+            else{
+                record_map[signkey]=1;
+                record_map[invsignkey]=1;
+            }
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
@@ -193,10 +197,10 @@ bool write_seed(Seed_set& tset,
                 char* pchr,
                 std::fstream& output,
                 int chr,
-                int chrlen,
                 int maxcol=60){
     char* ps=pchr;
     int start,end,distance;
+    int chrlen=strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
         << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<60<<std::endl;
