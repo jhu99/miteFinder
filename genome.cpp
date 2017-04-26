@@ -75,9 +75,4 @@ char* Genome::getChrom(int pos)
   return this->vecChrom[pos];
 }
 
-int Genome::getSizeChrom(int pos)
-{
-  return std::strlen(this->vecChrom[pos]);
-}
-
 

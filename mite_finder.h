@@ -35,7 +35,7 @@ bool clearMap(Tir_map& tmap) {
 
 std::string inverse_repeat(std::string key,int base,int pos) {
     std::string invkey;
-    int len=key.length();
+    int len=(int)key.length();
     for(int i=len-1;i>=0;i--) {
         if (i==pos){
             switch (base) {
@@ -82,7 +82,7 @@ bool build_kmer_index(Tir_map& tirmap,
                       int pos,
                       int k=10)
 {
-    int len=fragment.length();
+    int len=(int)fragment.length();
     if(len<k) return false;
     for(int i=0;i<=len-k;i++)
     {
@@ -193,7 +193,7 @@ bool write_seed(Seed_set& tset,
                 int maxcol=60){
     char* ps=pchr;
     int start,end,distance;
-    int chrlen=strlen(pchr);
+    int chrlen=(int)strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
         << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<60<<std::endl;
@@ -271,12 +271,12 @@ bool mite_finder(Seed_set& seedset,
                  char* pChr,
                 int fragLen=10000,
                 int k=10) {
-  int len=std::strlen(pChr);
+  int len=(int)std::strlen(pChr);
   Tir_map tmap;
   char* pCurr = pChr;
   int pos = 0;
   while(pos<len) {
-    int remainder=std::strlen(pCurr);
+    int remainder=(int)std::strlen(pCurr);
     std::string fragment;
     if(remainder <= fragLen*1.5) {
       fragment=std::string(pCurr,remainder);

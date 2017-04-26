@@ -21,9 +21,8 @@ int main(int argc, const char * argv[]) {
     output.open("./mite_candidates.fsa",std::ios_base::out);
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
-        int chrlen=osgenome.getSizeChrom(i);
         mite_finder(tset,pchr,10000);
-        write_seed(tset,pchr,output,i+1,chrlen);
+        write_seed(tset,pchr,output,i+1);
         tset.clear();
     }
     output.close();
