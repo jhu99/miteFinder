@@ -302,7 +302,6 @@ bool mite_finder(Seed_set& seedset,
       pos += fragLen-MAX_LENGTH_MITE;
     }
     extract_seed_from_map(tmap,seedset,k);
-    seedset.sort();
     clearMap(tmap);
     pCurr=pChr+pos;
   }
