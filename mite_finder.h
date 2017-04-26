@@ -103,8 +103,8 @@ bool build_kmer_index(Tir_map& tirmap,
 bool search_seed(std::vector<int>* v1,
                  std::vector<int>* v2,
                  Seed_set& seedset,
-                 int mis_tir,
-                 int mis_tirpos,
+                 int mis_tir=0,
+                 int mis_tirpos=0,
                  int k=10) {
     std::vector<int>::iterator i1,i2;
     for(i1=v1->begin();i1!=v1->end();i1++) {
@@ -127,7 +127,8 @@ bool search_seed(std::vector<int>* v1,
 
 bool extract_seed_from_map(Tir_map& tmap,
                            Seed_set& tset,
-                           int k=10) {
+                           int k=10,
+                           bool enable_mismatch=true) {
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
     std::unordered_map<std::string, int> record_map;
@@ -135,8 +136,16 @@ bool extract_seed_from_map(Tir_map& tmap,
     {
         key=it->first;
         standinvkey=inverse_repeat(key,0,10);
+        if(!enable_mismatch){
+            if(tmap.find(standinvkey)!=tmap.end()){
+                v1=it->second;
+                v2=tmap.at(standinvkey);
+                search_seed(v1,v2,tset,0,0,k);
+            }
+            continue;
+        }
         for (int i=0;i<4;i++)
-        for (int j=1;j<9;j++)
+        for (int j=1;j<(k-1);j++)
         {
             invkey=inverse_repeat(key,i,j);
             if(tmap.find(invkey)==tmap.end())continue;
