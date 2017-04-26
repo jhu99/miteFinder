@@ -116,34 +116,27 @@ bool extract_seed_from_map(Tir_map& tmap,
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
     std::unordered_map<std::string, bool> record_map;
-    std::string combinedKey,combinedRevKey;
     for(auto it=tmap.begin();it!=tmap.end();++it)
     {
         key=it->first;
         standinvkey=inverse_repeat(key,0,0);
         int mis_tir=1;
-        if(!enable_mismatch){
-            if(tmap.find(standinvkey)!=tmap.end()){
-                v1=it->second;
-                v2=tmap.at(standinvkey);
-                search_seed(v1,v2,tset,0,0,k);
-            }
-            continue;
+        if(tmap.find(standinvkey)!=tmap.end()){
+            v1=it->second;
+            v2=tmap.at(standinvkey);
+            search_seed(v1,v2,tset,0,0,k);
         }
+        if(!enable_mismatch)continue;
         for (int i=0;i<4;i++)
         for (int j=1;j<(k-1);j++)
         {
+            if(standinvkey[j]==DNA_NUCLEOTIDE[i])continue;
             invkey=inverse_repeat(key,i,j);
             if(tmap.find(invkey)==tmap.end())continue;
-            combinedKey=key+invkey;
-            combinedRevKey=invkey+key;
-            if(record_map.find(combinedRevKey)!=record_map.end())continue;
-            if(record_map.find(combinedKey)!=record_map.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
-            record_map[combinedKey]=true;
             if (invkey==standinvkey)
-                mis_tir=1;
+                mis_tir=0;
             search_seed(v1,v2,tset,mis_tir,j,k);
         }
     }
@@ -268,6 +261,7 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
 
 bool mite_finder(Seed_set& seedset,
                  char* pChr,
+                 bool enable_mismatch,
                 int fragLen=10000,
                 int k=10) {
   int len=(int)std::strlen(pChr);
@@ -286,7 +280,7 @@ bool mite_finder(Seed_set& seedset,
       build_kmer_index(tmap,fragment,pos,k);
       pos += fragLen-MAX_LENGTH_MITE;
     }
-    extract_seed_from_map(tmap,seedset,k,false);
+    extract_seed_from_map(tmap,seedset,k,enable_mismatch);
     clearMap(tmap);
     pCurr=pChr+pos;
   }

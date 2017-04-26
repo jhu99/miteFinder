@@ -12,7 +12,8 @@
 #include "mite_finder.h"
 
 int main(int argc, const char * argv[]) {
-    std::string filename="./OSgenomeV6.man";
+    std::string filename="/Users/jialu/Research/datasets/OSgenomeV6.man";
+    bool enable_mismatch=false;
     Genome osgenome;
     osgenome.readGenome(filename);
     int numChr=osgenome.getNumChrom();
@@ -21,7 +22,7 @@ int main(int argc, const char * argv[]) {
     output.open("./mite_candidates.fsa",std::ios_base::out);
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
-        mite_finder(tset,pchr,10000);
+        mite_finder(tset,pchr,enable_mismatch,10000,MIN_LENGTH_TIR);
         write_seed(tset,pchr,output,i+1);
         tset.clear();
     }
