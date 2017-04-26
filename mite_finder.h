@@ -118,7 +118,7 @@ bool search_seed(std::vector<int>* v1,
             }else
             {
                 if((p1-p2)>(MAX_LENGTH_MITE-k)) continue;
-                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+9-mis_tirpos));
+                seedset.push_back(Seed(p2,p2+k-1,p1,p1+k-1,mis_tir,p2+k-1-mis_tirpos));
             }
         }
     }
