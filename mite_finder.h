@@ -139,14 +139,6 @@ bool extract_seed_from_map(Tir_map& tmap,
         for (int j=1;j<9;j++)
         {
             invkey=inverse_repeat(key,i,j);
-            std::string signkey,invsignkey;
-            signkey=signkey+key+invkey;
-            invsignkey=invsignkey+invkey+key;
-            if (record_map.find(signkey)!=record_map.end()) continue;
-            else{
-                record_map[signkey]=1;
-                record_map[invsignkey]=1;
-            }
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
@@ -174,18 +166,19 @@ bool check_mite_structure(Seed& sd, const char* pchr) {
     rate=((double)GCnum/(double)(sd.pos2-sd.pos1+1));
     if (rate<0.2)
         return false;
-    for(tsd=MIN_LENGTH_TSD;tsd<=MAX_LENGTH_TSD;tsd++) {
+    for(tsd=MAX_LENGTH_TSD;tsd>=MIN_LENGTH_TSD;tsd--) {
         st1=sd.pos1-tsd;
         st2=sd.pos4+1;
-        while (pchr[st1]==pchr[st2]) {
-            st1++;
-            st2++;
-        }
-        if (st1>=sd.pos1)
+        std::string tsdsequence1(pchr+st1,pchr+(st1+tsd));
+        std::string tsdsequence2(pchr+st2,pchr+(st2+tsd));
+        if (tsdsequence1==tsdsequence2)
+        {
             tsdlen=tsd;
+            break;
+        }
     }
     if (tsdlen==2){
-        if (pchr[sd.pos1-1]!='A'||pchr[sd.pos1-2]!='T')
+        if (pchr[sd.pos1-1]=='A'&&pchr[sd.pos1-2]=='T')
             return false;
     }
     sd.tsd=tsdlen;
@@ -211,8 +204,8 @@ bool write_seed(Seed_set& tset,
         }
         else
         {
-            start=it->pos1-it->tsd-60;
-            end=it->pos4+it->tsd+61;
+            start=it->pos1-it->tsd;
+            end=it->pos4+it->tsd+1;
         }
         ps=pchr+start;
         while(start<end){
@@ -254,16 +247,6 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
         sit++;
         while(sit!=tset.end()){
             if(tmp==(*sit)){
-                 if (it->mismatch_tir==0&&sit->mismatch_tir==1)
-                 {
-                     it->mismatch_tir=sit->mismatch_tir;
-                     it->mis_tirpos=sit->mis_tirpos;
-                 }
-                 else if (it->mismatch_tir==1&&sit->mismatch_tir==1)
-                 {
-                     if (it->mis_tirpos!=sit->mis_tirpos)
-                        break;
-                 }
                 (*it)+=1;
                 tmp+=one;
                 sit=tset.erase(sit);
