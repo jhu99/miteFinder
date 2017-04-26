@@ -131,7 +131,8 @@ bool extract_seed_from_map(Tir_map& tmap,
                            bool enable_mismatch=true) {
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
-    std::unordered_map<std::string, int> record_map;
+    std::unordered_map<std::string, bool> record_map;
+    std::string combinedKey,combinedRevKey;
     for(auto it=tmap.begin();it!=tmap.end();++it)
     {
         key=it->first;
@@ -149,8 +150,12 @@ bool extract_seed_from_map(Tir_map& tmap,
         {
             invkey=inverse_repeat(key,i,j);
             if(tmap.find(invkey)==tmap.end())continue;
+            combinedKey=key+invkey;
+            combinedRevKey=invkey+key;
+            if(record_map.find(combinedRevKey)!=record_map.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
+            record_map[combinedKey]=true;
             if (invkey==standinvkey)
             search_seed(v1,v2,tset,0,j,k);
             else
@@ -297,6 +302,7 @@ bool mite_finder(Seed_set& seedset,
       pos += fragLen-MAX_LENGTH_MITE;
     }
     extract_seed_from_map(tmap,seedset,k);
+    seedset.sort();
     clearMap(tmap);
     pCurr=pChr+pos;
   }
