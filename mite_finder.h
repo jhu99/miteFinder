@@ -137,6 +137,7 @@ bool extract_seed_from_map(Tir_map& tmap,
             combinedKey=key+invkey;
             combinedRevKey=invkey+key;
             if(record_map.find(combinedRevKey)!=record_map.end())continue;
+            if(record_map.find(combinedKey)!=record_map.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
             record_map[combinedKey]=true;
