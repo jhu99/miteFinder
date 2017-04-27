@@ -123,7 +123,6 @@ bool extract_seed_from_map(Tir_map& tmap,
             search_seed(v1,v2,tset,0,0,k);
         }
         if(!enable_mismatch)continue;
-        
         for (int i=0;i<4;i++)
         for (int j=1;j<(k-1);j++)
         {
@@ -184,8 +183,9 @@ bool write_seed(Seed_set& tset,
     int chrlen=(int)strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
-        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<60<<std::endl;
-        if (it->pos1<60||it->pos4+60>=chrlen)
+        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<maxcol<<std::endl;
+        
+        if (it->pos1<maxcol || it->pos4+60>=chrlen)
         {
             start=it->pos1-it->tsd;
             end=it->pos4+it->tsd+1;
@@ -210,9 +210,8 @@ bool write_seed(Seed_set& tset,
     return true;
 }
 
-// Collapse adjacent seeds and check their tsd.
-bool collapse_seed(Seed_set& tset, char* pchr) {
-    // Remove replicate seeds from tset.
+// Remove duplicate seeds from tset.
+bool remove_duplicate_seed(Seed_set& tset) {
     Seed_set::iterator sit;
     for(Seed_set::iterator it=tset.begin();it!=tset.end();++it){
         sit=it;
@@ -225,9 +224,13 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
             }
         }
     }
+    return true;
+}
+// Collapse adjacent seeds and check their tsd.
+bool collapse_seed(Seed_set& tset, char* pchr) {
     // Collapse adjacent seeds.
     Seed tmp,one;
-    Seed_set::iterator it=tset.begin();
+    Seed_set::iterator sit,it=tset.begin();
     while(it!=tset.end()){
         tmp=*it;
         tmp+=one;
@@ -281,7 +284,8 @@ bool mite_finder(Seed_set& seedset,
     pCurr=pChr+pos;
   }
   seedset.sort();
-  collapse_seed(seedset, pChr);
+  remove_duplicate_seed(seedset);
+  //collapse_seed(seedset, pChr);
   return true;
 }
 #endif /* mite_finder_h */
