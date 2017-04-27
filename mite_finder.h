@@ -120,7 +120,6 @@ bool extract_seed_from_map(Tir_map& tmap,
     {
         key=it->first;
         standinvkey=inverse_repeat(key,0,0);
-        int mis_tir=1;
         if(tmap.find(standinvkey)!=tmap.end()){
             v1=it->second;
             v2=tmap.at(standinvkey);
@@ -135,9 +134,7 @@ bool extract_seed_from_map(Tir_map& tmap,
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
-            if (invkey==standinvkey)
-                mis_tir=0;
-            search_seed(v1,v2,tset,mis_tir,j,k);
+            search_seed(v1,v2,tset,1,j,k);
         }
     }
   return true;
