@@ -33,7 +33,7 @@ bool clearMap(Tir_map& tmap) {
   return true;
 }
 
-std::string inverse_repeat(std::string key,int base,int pos) {
+std::string inverse_repeat(std::string key) {
     std::string invkey;
     int len=(int)key.length();
     for(int i=len-1;i>=0;i--) {
@@ -54,9 +54,6 @@ std::string inverse_repeat(std::string key,int base,int pos) {
             invkey += 'N';
             break;
         }
-    }
-    if(pos!=0){
-        invkey[pos]=DNA_NUCLEOTIDE[base];
     }
     return invkey;
 }
@@ -119,18 +116,20 @@ bool extract_seed_from_map(Tir_map& tmap,
     for(auto it=tmap.begin();it!=tmap.end();++it)
     {
         key=it->first;
-        standinvkey=inverse_repeat(key,0,0);
+        standinvkey=inverse_repeat(key);
         if(tmap.find(standinvkey)!=tmap.end()){
             v1=it->second;
             v2=tmap.at(standinvkey);
             search_seed(v1,v2,tset,0,0,k);
         }
         if(!enable_mismatch)continue;
+        
         for (int i=0;i<4;i++)
         for (int j=1;j<(k-1);j++)
         {
             if(standinvkey[j]==DNA_NUCLEOTIDE[i])continue;
-            invkey=inverse_repeat(key,i,j);
+            invkey=standinvkey;
+            invkey[j]=DNA_NUCLEOTIDE[i];
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
