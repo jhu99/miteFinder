@@ -33,8 +33,43 @@ bool clearMap(Tir_map& tmap) {
   return true;
 }
 
-std::string inverse_repeat(std::string key) {
-    std::string invkey;
+bool check_repeat_stretch(std::string& tir){
+    int len=(int)tir.length();
+    int homopolymer=1,max_homopolymer=1,dinucleotide=1,max_dinucleotide=1;
+    for(int i=1;i<len;i++){
+        if(tir[i]==tir[i-1]){
+            homopolymer++;
+            if(homopolymer>max_homopolymer) max_homopolymer=homopolymer;
+        }
+        else{
+            homopolymer=1;
+        }
+    }
+    for(int i=3;i<len;i=i+2){
+        if((tir[i-1]==tir[i-3])&&tir[i]==tir[i-2]){
+            dinucleotide++;
+            if(max_dinucleotide<dinucleotide)
+                max_dinucleotide=dinucleotide;
+        }else{
+            dinucleotide=1;
+        }
+    }
+    for(int i=4;i<len;i=i+2){
+            if((tir[i-1]==tir[i-3])&&tir[i]==tir[i-2]){
+                dinucleotide++;
+                if(max_dinucleotide<dinucleotide)
+                    max_dinucleotide=dinucleotide;
+            }else{
+                dinucleotide=1;
+            }
+        }
+    if(max_homopolymer>=8 || max_dinucleotide>=4)
+        return true;
+    else
+        return false;
+}
+
+bool inverse_repeat(std::string& invkey,std::string key) {
     int len=(int)key.length();
     for(int i=len-1;i>=0;i--) {
         switch (key[i]) {
@@ -51,11 +86,10 @@ std::string inverse_repeat(std::string key) {
             invkey += 'C';
             break;
         case 'N':
-            invkey += 'N';
-            break;
+            return false;
         }
     }
-    return invkey;
+    return true;
 }
 
 bool build_kmer_index(Tir_map& tirmap,
@@ -116,23 +150,26 @@ bool extract_seed_from_map(Tir_map& tmap,
     for(auto it=tmap.begin();it!=tmap.end();++it)
     {
         key=it->first;
-        standinvkey=inverse_repeat(key);
+        standinvkey.clear();
+        if(!inverse_repeat(standinvkey,key))continue;
         if(tmap.find(standinvkey)!=tmap.end()){
+            if(check_repeat_stretch(key))continue;
             v1=it->second;
             v2=tmap.at(standinvkey);
             search_seed(v1,v2,tset,0,0,k);
         }
         if(!enable_mismatch)continue;
+        invkey=standinvkey;
         for (int i=0;i<4;i++)
         for (int j=1;j<(k-1);j++)
         {
             if(standinvkey[j]==DNA_NUCLEOTIDE[i])continue;
-            invkey=standinvkey;
             invkey[j]=DNA_NUCLEOTIDE[i];
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
             search_seed(v1,v2,tset,1,j,k);
+            invkey[j]=standinvkey[j];
         }
     }
   return true;
