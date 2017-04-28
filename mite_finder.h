@@ -152,24 +152,32 @@ bool extract_seed_from_map(Tir_map& tmap,
         key=it->first;
         standinvkey.clear();
         if(!inverse_repeat(standinvkey,key))continue;
-        if(tmap.find(standinvkey)!=tmap.end()){
+        /*if(tmap.find(standinvkey)!=tmap.end()){
             if(check_repeat_stretch(key))continue;
             v1=it->second;
             v2=tmap.at(standinvkey);
             search_seed(v1,v2,tset,0,0,k);
-        }
+        }*/
         if(!enable_mismatch)continue;
         invkey=standinvkey;
+        bool mark=false,mis_tir=1;
         for (int i=0;i<4;i++)
         for (int j=1;j<(k-1);j++)
         {
-            if(standinvkey[j]==DNA_NUCLEOTIDE[i])continue;
+            if(standinvkey[j]==DNA_NUCLEOTIDE[i]){
+                if(mark)continue;
+                else{
+                    mis_tir=0;
+                    mark=true;
+                }
+            };
             invkey[j]=DNA_NUCLEOTIDE[i];
             if(tmap.find(invkey)==tmap.end())continue;
             v1=it->second;
             v2=tmap.at(invkey);
-            search_seed(v1,v2,tset,1,j,k);
+            search_seed(v1,v2,tset,mis_tir,j,k);
             invkey[j]=standinvkey[j];
+            mis_tir=1;
         }
     }
   return true;
@@ -330,7 +338,7 @@ bool mite_finder(Seed_set& seedset,
   }
   seedset.sort();
   remove_duplicate_seed(seedset);
-  collapse_seed(seedset, pChr);
+  //collapse_seed(seedset, pChr);
   return true;
 }
 #endif /* mite_finder_h */
