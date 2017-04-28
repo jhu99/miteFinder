@@ -266,19 +266,27 @@ bool remove_duplicate_seed(Seed_set& tset) {
 // Collapse adjacent seeds and check their tsd.
 bool collapse_seed(Seed_set& tset, char* pchr) {
     // Collapse adjacent seeds.
-    Seed tmp,one;
+    // Collapse adjacent seeds.
+    Seed tmp1,tmp2,one,two(2);
     Seed_set::iterator sit,it=tset.begin();
     while(it!=tset.end()){
-        tmp=*it;
-        tmp+=one;
+        tmp2=tmp1=*it;
+        tmp1+=one;
+        tmp2+=two;
         sit=it;
         sit++;
         while(sit!=tset.end()){
-            if(tmp==(*sit)){
+            if(tmp1==(*sit)){
                 (*it)+=1;
-                tmp+=one;
+                tmp1+=one;
+                tmp2+=one;
                 sit=tset.erase(sit);
-            }else if((*sit)<tmp){
+            }else if(it->mismatch_tir==0&&tmp2==(*sit)){
+                it->mismatch_tir=1;
+                (*it)+=2;
+                tmp1+=two;
+                sit=tset.erase(sit);
+            }else if((*sit)<tmp1){
                 sit++;
             }else{
                 break;
@@ -289,7 +297,7 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
             it=tset.erase(it);
         }
         else{
-             it++;
+            it++;
         }
     }
     return true;
@@ -322,7 +330,7 @@ bool mite_finder(Seed_set& seedset,
   }
   seedset.sort();
   remove_duplicate_seed(seedset);
-  //collapse_seed(seedset, pChr);
+  collapse_seed(seedset, pChr);
   return true;
 }
 #endif /* mite_finder_h */

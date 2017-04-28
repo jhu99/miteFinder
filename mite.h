@@ -22,6 +22,13 @@ public:
         this->pos4=-1;
         this->tsd=0;
     }
+    Seed(int step)
+    {
+        this->pos1=step;
+        this->pos2=step;
+        this->pos3=step*(-1);
+        this->pos4=step*(-1);
+    }
     Seed(int p1,
          int p2,
          int p3,
