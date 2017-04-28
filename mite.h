@@ -76,10 +76,8 @@ public:
     }
     Seed& operator+=(const int i)
     {
-        for(int t=i;t>0;t--){
-            this->pos2++;
-            this->pos3--;
-        }
+        this->pos2+=i;
+        this->pos3-=i;
         return (*this);
     }
 };
