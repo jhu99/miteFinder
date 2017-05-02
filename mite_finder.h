@@ -143,7 +143,7 @@ bool search_seed(std::vector<int>* v1,
 bool extract_seed_from_map(Tir_map& tmap,
                            Seed_set& tset,
                            int k=10,
-                           bool enable_mismatch=true) {
+                           int enable_mismatch=0) {
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
     std::unordered_map<std::string, bool> record_map;
@@ -152,32 +152,32 @@ bool extract_seed_from_map(Tir_map& tmap,
         key=it->first;
         standinvkey.clear();
         if(!inverse_repeat(standinvkey,key))continue;
-        /*if(tmap.find(standinvkey)!=tmap.end()){
-            if(check_repeat_stretch(key))continue;
-            v1=it->second;
-            v2=tmap.at(standinvkey);
-            search_seed(v1,v2,tset,0,0,k);
-        }*/
-        if(!enable_mismatch)continue;
-        invkey=standinvkey;
-        bool mark=false,mis_tir=1;
-        for (int i=0;i<4;i++)
-        for (int j=1;j<(k-1);j++)
+        if(enable_mismatch==0 || enable_mismatch==2)
         {
-            if(standinvkey[j]==DNA_NUCLEOTIDE[i]){
-                if(mark)continue;
-                else{
-                    mis_tir=0;
-                    mark=true;
+            if(tmap.find(standinvkey)!=tmap.end()){
+                if(check_repeat_stretch(key))continue;
+                v1=it->second;
+                v2=tmap.at(standinvkey);
+                search_seed(v1,v2,tset,0,0,k);
+            }
+        }else if(enable_mismatch==1 || enable_mismatch==2)
+        {
+            if(check_repeat_stretch(key))continue;
+            invkey=standinvkey;
+            for (int i=0;i<4;i++)
+            for (int j=1;j<(k-1);j++)
+            {
+                if(standinvkey[j]==DNA_NUCLEOTIDE[i])continue;
+                invkey[j]=DNA_NUCLEOTIDE[i];
+                if(tmap.find(invkey)==tmap.end()){
+                    invkey[j]=standinvkey[j];
+                    continue;
                 }
-            };
-            invkey[j]=DNA_NUCLEOTIDE[i];
-            if(tmap.find(invkey)==tmap.end())continue;
-            v1=it->second;
-            v2=tmap.at(invkey);
-            search_seed(v1,v2,tset,mis_tir,j,k);
-            invkey[j]=standinvkey[j];
-            mis_tir=1;
+                v1=it->second;
+                v2=tmap.at(invkey);
+                search_seed(v1,v2,tset,1,j,k);
+                invkey[j]=standinvkey[j];
+            }
         }
     }
   return true;
@@ -274,7 +274,6 @@ bool remove_duplicate_seed(Seed_set& tset) {
 // Collapse adjacent seeds and check their tsd.
 bool collapse_seed(Seed_set& tset, char* pchr) {
     // Collapse adjacent seeds.
-    // Collapse adjacent seeds.
     Seed tmp1,tmp2,one,two(2);
     Seed_set::iterator sit,it=tset.begin();
     while(it!=tset.end()){
@@ -313,7 +312,7 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
 
 bool mite_finder(Seed_set& seedset,
                  char* pChr,
-                 bool enable_mismatch,
+                 int enable_mismatch,
                 int fragLen=10000,
                 int k=10) {
   int len=(int)std::strlen(pChr);
