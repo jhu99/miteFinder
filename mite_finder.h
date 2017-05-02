@@ -211,7 +211,7 @@ bool check_mite_structure(Seed& sd, const char* pchr) {
         }
     }
     if (tsdlen==2){
-        if (pchr[sd.pos1-1]=='A'&&pchr[sd.pos1-2]=='T')
+        if (pchr[sd.pos1-1]!='A'||pchr[sd.pos1-2]!='T')
             return false;
     }
     sd.tsd=tsdlen;
@@ -230,7 +230,7 @@ bool write_seed(Seed_set& tset,
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
         << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<it->mis_tirpos<<"|"<<it->mismatch_tir<<std::endl;
-        
+
         if (it->pos1<maxcol || it->pos4+60>=chrlen)
         {
             start=it->pos1-it->tsd;
