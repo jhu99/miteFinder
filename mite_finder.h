@@ -197,7 +197,7 @@ bool check_mite_structure(Seed& sd, const char* pchr) {
             GCnum++;
     }
     rate=((double)GCnum/(double)(sd.pos2-sd.pos1+1));
-    if (rate<0.2)
+    if (rate<MIN_GC_CONTANT || rate>MAX_GC_CONTANT)
         return false;
     for(tsd=MAX_LENGTH_TSD;tsd>=MIN_LENGTH_TSD;tsd--) {
         st1=sd.pos1-tsd;
@@ -229,7 +229,7 @@ bool write_seed(Seed_set& tset,
     int chrlen=(int)strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
-        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<maxcol<<std::endl;
+        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<it->mis_tirpos<<"|"<<it->mismatch_tir<<std::endl;
         
         if (it->pos1<maxcol || it->pos4+60>=chrlen)
         {
@@ -338,7 +338,7 @@ bool mite_finder(Seed_set& seedset,
   }
   seedset.sort();
   remove_duplicate_seed(seedset);
-  //collapse_seed(seedset, pChr);
+  collapse_seed(seedset, pChr);
   return true;
 }
 #endif /* mite_finder_h */
