@@ -160,7 +160,8 @@ bool extract_seed_from_map(Tir_map& tmap,
                 v2=tmap.at(standinvkey);
                 search_seed(v1,v2,tset,0,0,k);
             }
-        }else if(enable_mismatch==1 || enable_mismatch==2)
+        }
+        if(enable_mismatch==1 || enable_mismatch==2)
         {
             if(check_repeat_stretch(key))continue;
             invkey=standinvkey;
