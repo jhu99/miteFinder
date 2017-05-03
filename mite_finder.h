@@ -143,7 +143,8 @@ bool search_seed(std::vector<int>* v1,
 bool extract_seed_from_map(Tir_map& tmap,
                            Seed_set& tset,
                            int k=10,
-                           int enable_mismatch=0) {
+                           bool enable_mismatch=false
+                           ) {
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
     std::unordered_map<std::string, bool> record_map;
@@ -152,16 +153,13 @@ bool extract_seed_from_map(Tir_map& tmap,
         key=it->first;
         standinvkey.clear();
         if(!inverse_repeat(standinvkey,key))continue;
-        if(enable_mismatch==0 || enable_mismatch==2)
-        {
-            if(tmap.find(standinvkey)!=tmap.end()){
-                if(check_repeat_stretch(key))continue;
-                v1=it->second;
-                v2=tmap.at(standinvkey);
-                search_seed(v1,v2,tset,0,0,k);
-            }
+        if(tmap.find(standinvkey)!=tmap.end()){
+            if(check_repeat_stretch(key))continue;
+            v1=it->second;
+            v2=tmap.at(standinvkey);
+            search_seed(v1,v2,tset,0,0,k);
         }
-        if(enable_mismatch==1 || enable_mismatch==2)
+        if(enable_mismatch)
         {
             if(check_repeat_stretch(key))continue;
             invkey=standinvkey;
