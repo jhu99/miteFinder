@@ -9,6 +9,7 @@ const int MAX_LENGTH_MITE=800;
 const int MIN_LENGTH_MITE=50;
 const int MAX_MEMBER_MITE=10000;
 const int MAX_MISMATCH_TIR=1;
+const int LENGTH_FLANK=60;
 const char DNA_NUCLEOTIDE[4]={'A','T','C','G'};
 const float MIN_GC_CONTANT=0.2;
 const float MAX_GC_CONTANT=0.8;

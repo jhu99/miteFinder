@@ -220,26 +220,25 @@ bool check_mite_structure(Seed& sd, const char* pchr) {
 bool write_seed(Seed_set& tset,
                 char* pchr,
                 std::fstream& output,
-                int chr,
+				int chr,
+				bool write_flank=true,
                 int maxcol=60){
     char* ps=pchr;
-    int start,end,distance;
+    int start = 0,end = 0,distance = 0;
     int chrlen=(int)strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
-        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|"<<it->mis_tirpos<<"|"<<it->mismatch_tir<<std::endl;
-
-        if (it->pos1<maxcol || it->pos4+60>=chrlen)
-        {
-            start=it->pos1-it->tsd;
-            end=it->pos4+it->tsd+1;
-        }
-        else
-        {
-            start=it->pos1-it->tsd;
-            end=it->pos4+it->tsd+1;
-        }
-        ps=pchr+start;
+        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|m"<<it->mis_tirpos<<"|"<<it->mismatch_tir<<std::endl;
+		if(write_flank){
+			start=it->pos1-LENGTH_FLANK;
+			end=it->pos4+LENGTH_FLANK+1;
+			if(start<0)start=0;
+			if(end>chr)end=chr;
+		}else{
+			start=it->pos1;
+			end=it->pos4+1;
+		}
+		ps=pchr+start;
         while(start<end){
             distance=end-start;
             if(distance>maxcol){
