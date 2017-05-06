@@ -233,7 +233,7 @@ bool write_seed(Seed_set& tset,
 			start=it->pos1-LENGTH_FLANK;
 			end=it->pos4+LENGTH_FLANK+1;
 			if(start<0)start=0;
-			if(end>chr)end=chr;
+			if(end>chrlen)end=chr;
 		}else{
 			start=it->pos1;
 			end=it->pos4+1;
