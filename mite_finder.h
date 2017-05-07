@@ -228,7 +228,7 @@ bool write_seed(Seed_set& tset,
     int chrlen=(int)strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
-        << it->pos3 <<"|"<<it->pos4<<"|"<<it->tsd<<"|m"<<it->mis_tirpos<<"|"<<it->mismatch_tir<<std::endl;
+        << it->pos3 <<"|"<<it->pos4<<"|t"<<it->tsd<<"|"<<it->mis_tirpos<<"|m"<<it->mismatch_tir<<std::endl;
 		if(write_flank){
 			start=it->pos1-LENGTH_FLANK;
 			end=it->pos4+LENGTH_FLANK+1;
