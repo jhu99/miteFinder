@@ -19,7 +19,8 @@ public:
   Genome();
   ~Genome();
   // It reads a genome formatted in a fasta file.
-  void readGenome(std::string path_to_file);
+  void readGenome(std::string);
+  void readSequence(std::string);
   int getNumChrom();
   char* getChrom(int);
 };

@@ -17,8 +17,8 @@ CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE
 else
 CXXFLAGS = -Wall -O3 -ffast-math -finline-functions -std=c++0x -DNDEBUG
 endif
-all: miteFinder
-miteFinder: main.cpp genome.o mite.o
+all: miteFinderTest
+miteFinderTest: main.cpp genome.o mite.o
 	${CXX} ${CXXFLAGS} -o $@ $^
 
 clean:

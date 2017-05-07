@@ -13,6 +13,30 @@ Genome::~Genome()
     delete [] *it;
   }
 }
+
+void Genome::readSequence(std::string path_to_file){
+	std::ifstream input(path_to_file.c_str());
+	std::string line,chrom;
+	int count=0;
+	char* pChrom = nullptr;
+	while(std::getline(input, line)){
+		if(line[0]=='>'){
+			count++;
+			if(count==1)continue;
+			pChrom=new char[chrom.length()+1];
+			this->vecChrom.push_back(pChrom);
+			chrom.copy(pChrom, chrom.length());
+			chrom.clear();
+		}else{
+			chrom.append(line);
+		}
+	}
+	pChrom=new char[chrom.length()+1];
+	this->vecChrom.push_back(pChrom);
+	chrom.copy(pChrom, chrom.length());
+	this->numChrom=count;
+}
+
 void Genome::readGenome(std::string path_to_file)
 {
   std::ifstream input(path_to_file.c_str());
