@@ -16,16 +16,34 @@
 class ArgParser
 {
 private:
-	std::unordered_map<std::string, std::string> para_map;
 	std::queue<std::string> args;
 	std::queue<std::string> parValues;
+    std::string commandName;
+    enum OptType { UNKNOWN=0, BOOL=1, STRING=2, DOUBLE=3, INTEGER=4, FUNC=5 };
+    class ParData{
+        union{
+            bool *pBool;
+            int* pInt;
+            double* pDouble;
+            std::string* pString;
+        };
+        std::string help;
+        bool mandatory;
+        OptType type;
+        bool has_syn;
+        ParData():mandatory(false), type(UNKNOWN), has_syn(false){
+            
+        }
+    };
+    std::unordered_map<std::string, ParData> para_map;
+    static void _showHelp(void *p);
 public:
-	ArgParser(int,char**);
+	ArgParser(int,const char**);
 	~ArgParser();
-	void boolOption(char*,char*);
-	void refOption(char*,char*,std::string&);
-	void refOption(char*,char*,int&);
-	void refOption(char*,char*,float&);
+	void boolOption(const char*,const char*);
+	void refOption(const char*,const char*,std::string&);
+	void refOption(const char*,const char*,int&);
+	void refOption(const char*,const char*,float&);
 	void run();
 };
 

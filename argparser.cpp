@@ -8,8 +8,8 @@
 
 #include "argparser.h"
 
-ArgParser::ArgParser(int argc, char** argv){
-	char* pArg;
+ArgParser::ArgParser(int argc, const char** argv){
+	const char* pArg;
 	for(int i=1;i<argc;i++){
 		if(argv[i][0]=='-'){
 			pArg=&argv[i][1];
@@ -18,5 +18,7 @@ ArgParser::ArgParser(int argc, char** argv){
 			parValues.push(argv[i]);
 		}
 	}
+}
+ArgParser::~ArgParser(){
 }
 

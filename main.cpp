@@ -18,6 +18,7 @@ int main(int argc, const char * argv[]) {
     bool enable_mismatch=true;
 	double seconds=0;
     Genome osgenome;
+    ArgParser myparser(argc,argv);
 	time_t start_time,end_time;
 	time(&start_time);
 	osgenome.readSequence(filename);
