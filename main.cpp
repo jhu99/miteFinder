@@ -11,6 +11,7 @@
 #include "genome.h"
 #include "mite.h"
 #include "mite_finder.h"
+#include "argparser.h"
 
 int main(int argc, const char * argv[]) {
     std::string filename="/Users/jialu/Research/datasets/OSgenomeV6.man";
