@@ -20,6 +20,8 @@ ArgParser::ArgParser(int argc, const char** argv){
 	}
 }
 ArgParser::~ArgParser(){
+    boolOption("help", "");
+    boolOption("version", "Show the current version.");
 }
 void ArgParser::boolOption(const char* optName, const char* help){
     std::string opt=optName;
