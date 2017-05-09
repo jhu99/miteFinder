@@ -221,7 +221,7 @@ bool write_seed(Seed_set& tset,
                 char* pchr,
                 std::fstream& output,
 				int chr,
-				bool write_flank=true,
+				bool write_flank=false,
                 int maxcol=60){
     char* ps=pchr;
     int start = 0,end = 0,distance = 0;
