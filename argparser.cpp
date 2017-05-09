@@ -21,4 +21,55 @@ ArgParser::ArgParser(int argc, const char** argv){
 }
 ArgParser::~ArgParser(){
 }
+void ArgParser::boolOption(const char* optName, const char* help){
+    std::string opt=optName;
+    ParData obj;
+    obj.type=BOOL;
+    obj.help=help;
+    if(para_map.find(opt)!=para_map.end()){
+        std::cerr <<"Warning: Duplicate options were used!"<< std::endl;
+    }else{
+        para_map[opt]=obj;
+    }
+}
+void ArgParser::refOption(const char *optName, const char *help, int &refVariable,bool mandatory=false){
+    std::string opt=optName;
+    ParData obj;
+    obj.type=INTEGER;
+    obj.mandatory=mandatory;
+    obj.help=help;
+    obj.pInt=&refVariable;
+    if(para_map.find(opt)!=para_map.end()){
+        std::cerr <<"Warning: Duplicate options were used!"<< std::endl;
+    }else{
+        para_map[opt]=obj;
+    }
+}
+void ArgParser::refOption(const char *optName, const char *help, std::string &refVariable,bool mandatory=false){
+    std::string opt=optName;
+    ParData obj;
+    obj.type=STRING;
+    obj.mandatory=mandatory;
+    obj.help=help;
+    obj.pString=&refVariable;
+    if(para_map.find(opt)!=para_map.end()){
+        std::cerr <<"Warning: Duplicate options were used!"<< std::endl;
+    }else{
+        para_map[opt]=obj;
+    }
+}
+void ArgParser::refOption(const char *optName, const char *help, double &refVariable,bool mandatory=false){
+    std::string opt=optName;
+    ParData obj;
+    obj.type=DOUBLE;
+    obj.mandatory=mandatory;
+    obj.help=help;
+    obj.pDouble=&refVariable;
+    if(para_map.find(opt)!=para_map.end()){
+        std::cerr <<"Warning: Duplicate options were used!"<< std::endl;
+    }else{
+        para_map[opt]=obj;
+    }
+}
+
 
