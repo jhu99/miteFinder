@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <limits>
+#include <iostream>
 
 Genome::Genome():maxLength(0),numChrom(0)
 {
@@ -23,9 +24,11 @@ void Genome::readSequence(std::string path_to_file){
 		if(line[0]=='>'){
 			count++;
 			if(count==1)continue;
-			pChrom=new char[chrom.length()+1];
+			int chromsize=(int)chrom.length();
+			pChrom=new char[chromsize+1];
 			this->vecChrom.push_back(pChrom);
 			chrom.copy(pChrom, chrom.length());
+			pChrom[chromsize]='\0';
 			chrom.clear();
 		}else{
 			chrom.append(line);
