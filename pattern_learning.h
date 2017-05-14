@@ -38,13 +38,21 @@ void kmer_counter(char* pStr,Count_Map& kmer_map,int k){
 		}
 	}
 }
-void outputMap(Count_Map& tpmap,Count_Map& fnmap){
+void outputMap(Count_Map& tpmap,Count_Map& fnmap, std::fstream& output){
+	for(auto it=tpmap.begin();it!=tpmap.end();it++){
+		std::string key=it->first;
+		if(fnmap.find(key)!=fnmap.end()){
+			output << it->first <<"\t"<< tpmap[key] <<"\t"<< fnmap[key] <<std::endl;
+		}else{
+			output << it->first <<"\t"<<tpmap[key]<<"\t"<<0<<std::endl;
+		}
+	}
 }
-void patternLearning(std::string tpfilename,std::string fnfilename){
+void patternLearning(std::string tpfilename,std::string fnfilename,std::fstream& output){
 	Count_Map tpMap, fnMap;
 	countKmerFrequence(tpMap, tpfilename);
 	countKmerFrequence(fnMap, fnfilename);
-	outputMap(tpMap,fnMap);
+	outputMap(tpMap,fnMap,output);
 }
 
 #endif /* pattern_learning_h */
