@@ -11,21 +11,15 @@
 #include "genome.h"
 #include "mite.h"
 #include "mite_finder.h"
-#include "pattern_learning.h"
-#include "argparser.h"
 
 int main(int argc, const char * argv[]) {
     std::string filename="/Users/jialu/Research/datasets/OSgenomeV6.man";
-    //bool enable_mismatch=true;
-	//double seconds=0;
-    //Genome osgenome;
-    //ArgParser myparser(argc,argv);
-	//time_t start_time,end_time;
-	//time(&start_time);
-	std::fstream output("/Users/jialu/Research/datasets/kmer_count.txt",std::ios::out);
-	patternLearning("/Users/jialu/Research/datasets/matchresult.fsa", "/Users/jialu/Research/datasets/mismatchresult.fsa",output);
-	//test(filename);
-	/*osgenome.readSequence(filename);
+    bool enable_mismatch=true;
+	double seconds=0;
+    Genome osgenome;
+	time_t start_time,end_time;
+	time(&start_time);
+	osgenome.readSequence(filename);
     int numChr=osgenome.getNumChrom();
     Seed_set tset;
     std::fstream output;
@@ -39,7 +33,7 @@ int main(int argc, const char * argv[]) {
 	time(&end_time);
 	seconds= difftime(end_time, start_time);
 	std::cout << "The program cost "<<seconds<<" seconds totally to search for MITEs."<<std::endl;
-    output.close();*/
+    output.close();
 	output.close();
     return 0;
 }

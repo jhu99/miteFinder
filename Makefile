@@ -13,12 +13,12 @@ endif
 endif
 # Flags for compiling the code
 ifeq ($(MODE),Debug)
-CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE
+CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE -Ilib/
 else
-CXXFLAGS = -Wall -O3 -ffast-math -finline-functions -std=c++0x -DNDEBUG
+CXXFLAGS = -Wall -O3 -ffast-math -finline-functions -Ilib/ -std=c++0x -DNDEBUG
 endif
 all: miteFinderTest
-miteFinderTest: main.cpp genome.o mite.o
+miteFinderTest: tests/miteFinderTest.cpp lib/genome.o lib/mite.o
 	${CXX} ${CXXFLAGS} -o $@ $^
 
 clean:

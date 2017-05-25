@@ -190,6 +190,9 @@ bool check_mite_structure(Seed& sd, const char* pchr) {
         return false;
     int st1,st2,tir,tsd,GCnum=0,tsdlen=0;;
     double rate;
+	for(int i=sd.pos1;i<=sd.pos4;i++){
+		if(pchr[i]=='N') return false;
+	}
     for (tir=sd.pos1;tir<=sd.pos2;tir++){
         if (pchr[tir]=='G'||pchr[tir]=='C')
             GCnum++;
