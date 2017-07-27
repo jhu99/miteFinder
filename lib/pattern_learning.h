@@ -18,14 +18,17 @@ typedef std::unordered_map<std::string, int> Count_Map;
 void kmer_counter(char*,Count_Map&,int);
 
 
-void countKmerFrequence(Count_Map& kmer_map,std::string filename,int k=LENGTH_KMER){
+int countKmerFrequence(Count_Map& kmer_map,std::string filename,int k=LENGTH_KMER){
 	Genome seqs;
 	seqs.readSequence(filename);
 	int numSeq=seqs.getNumChrom();
+	int seqLen=0;
 	for(int i=0;i<numSeq;i++){
 		char* pStr=seqs.getChrom(i);
 		kmer_counter(pStr,kmer_map,k);
+		seqLen+=strlen(pStr);
 	}
+	return seqLen;
 }
 void kmer_counter(char* pStr,Count_Map& kmer_map,int k){
 	int len=(int)std::strlen(pStr);
@@ -38,27 +41,38 @@ void kmer_counter(char* pStr,Count_Map& kmer_map,int k){
 		}
 	}
 }
-void outputMap(Count_Map& tpmap,Count_Map& fpmap, std::fstream& output){
+void outputMap(Count_Map& tpmap,Count_Map& fpmap, std::fstream& output, int seqlenTp, int seqlenFP){
 	std::string key;
+	output <<"seqlenTp:"<<seqlenTp<<std::endl;
+	output <<"seqlenFp:"<<seqlenFP<<std::endl;
+	double score1=0,score2=0,ratio=0;
+	ratio=1.0*seqlenFP/seqlenTp;
 	for(auto it=tpmap.begin();it!=tpmap.end();it++){
 		key=it->first;
 		if(fpmap.find(key)!=fpmap.end()){
-			output << it->first <<"\t"<< tpmap[key] <<"\t"<< fpmap[key] <<std::endl;
+			score1=log2((tpmap[key]*ratio)/fpmap[key]);
+			score2=log2((tpmap[key]*1.0)/fpmap[key]);
+			output << it->first <<"\t"<< score1 <<"\t"<<score2<<"\t"<< tpmap[key] <<"\t"<<fpmap[key] <<std::endl;
 		}else{
-			output << it->first <<"\t"<<tpmap[key]<<"\t"<<0<<std::endl;
+			score1=log2((tpmap[key]*ratio)/0.001);
+			score2=log2((tpmap[key]*1.0)/0.001);
+			output << it->first <<"\t"<< score1 <<"\t"<<score2<<"\t"<< tpmap[key] <<"\t"<<fpmap[key] <<std::endl;
 		}
 	}
 	for(auto it=fpmap.begin();it!=fpmap.end();++it){
 		key=it->first;
 		if(tpmap.find(key)!=tpmap.end())continue;
-		output<<0<<"\t"<<it->second<<std::endl;
+		score1=log2((0.001*ratio)/fpmap[key]);
+		score2=log2((0.001)/fpmap[key]);
+		output<<it->first <<"\t"<<score1<<"\t"<<score2<<"\t"<<0<<"\t"<<it->second<<std::endl;
 	}
 }
 void patternLearning(std::string tpfilename,std::string fpfilename,std::fstream& output){
+	int seqLenTP,seqLenFP;
 	Count_Map tpMap, fpMap;
-	countKmerFrequence(tpMap, tpfilename);
-	countKmerFrequence(fpMap, fpfilename);
-	outputMap(tpMap,fpMap,output);
+	seqLenTP=countKmerFrequence(tpMap, tpfilename);
+	seqLenFP=countKmerFrequence(fpMap, fpfilename);
+	outputMap(tpMap,fpMap,output, seqLenTP, seqLenFP);
 }
 
 #endif /* pattern_learning_h */

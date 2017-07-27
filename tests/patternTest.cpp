@@ -7,7 +7,8 @@
 //
 
 #include <stdio.h>
-#include "patter_learning.h"
+#include <fstream>
+#include "pattern_learning.h"
 
 int main(int argc, const char * argv[]) {
 	std::string filename="/Users/jialu/Research/datasets/OSgenomeV6.man";
