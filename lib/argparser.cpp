@@ -9,6 +9,7 @@
 #include "argparser.h"
 
 ArgParser::ArgParser(int argc, const char** argv){
+	optnum=argc;
 	const char* pArg;
 	for(int i=1;i<argc;i++){
 		if(argv[i][0]=='-'){
@@ -34,7 +35,8 @@ void ArgParser::boolOption(const char* optName, const char* help){
         para_map[opt]=obj;
     }
 }
-void ArgParser::refOption(const char *optName, const char *help, int &refVariable,bool mandatory=false){
+ArgParser &ArgParser::refOption(const std::string &optName,const std::string &help,
+                                int &refVariable,bool mandatory=false){
     std::string opt=optName;
     ParData obj;
     obj.type=INTEGER;
@@ -46,8 +48,10 @@ void ArgParser::refOption(const char *optName, const char *help, int &refVariabl
     }else{
         para_map[opt]=obj;
     }
+    return *this;
 }
-void ArgParser::refOption(const char *optName, const char *help, std::string &refVariable,bool mandatory=false){
+ArgParser &ArgParser::refOption(const std::string &optName,const std::string &help,
+                                std::string &refVariable,bool mandatory){
     std::string opt=optName;
     ParData obj;
     obj.type=STRING;
@@ -59,8 +63,10 @@ void ArgParser::refOption(const char *optName, const char *help, std::string &re
     }else{
         para_map[opt]=obj;
     }
+    return *this;
 }
-void ArgParser::refOption(const char *optName, const char *help, double &refVariable,bool mandatory=false){
+ArgParser &ArgParser::refOption(const std::string &optName,const std::string &help,
+                                double &refVariable,bool mandatory=false){
     std::string opt=optName;
     ParData obj;
     obj.type=DOUBLE;
@@ -72,6 +78,25 @@ void ArgParser::refOption(const char *optName, const char *help, double &refVari
     }else{
         para_map[opt]=obj;
     }
+    return *this;
 }
+ArgParser &ArgParser::run()
+{
+    int n=args.size();
+    for(int i=0; i<n;i++)
+    {
+        std::string optname=args.front();
+        std::unordered_map<std::string, ParData>::iterator it=para_map.find(optname);
+        if (it!=para_map.end())
+        {
+            *it->second.pString=parValues.front();
+        }
+        args.pop();
+        parValues.pop();
+    }
+    return *this;
+}
+
+
 
 

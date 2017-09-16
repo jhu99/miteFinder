@@ -17,6 +17,7 @@
 class ArgParser
 {
 private:
+	int optnum;
 	std::queue<std::string> args;
 	std::queue<std::string> parValues;
     std::string commandName;
@@ -43,10 +44,10 @@ public:
 	ArgParser(int,const char**);
 	~ArgParser();
 	void boolOption(const char*,const char*);
-	void refOption(const char*,const char*,std::string&,bool);
-	void refOption(const char*,const char*,int&,bool);
-	void refOption(const char*,const char*,double&,bool);
-	void run();
+	ArgParser &refOption(const std::string &name,const std::string &help,std::string&,bool mandatory=false);
+	ArgParser &refOption(const std::string &name,const std::string &help,int&,bool);
+	ArgParser &refOption(const std::string &name,const std::string &help,double&,bool);
+	ArgParser &run();
 };
 
 
