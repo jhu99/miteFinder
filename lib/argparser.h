@@ -43,11 +43,12 @@ private:
 public:
 	ArgParser(int,const char**);
 	~ArgParser();
-	void boolOption(const char*,const char*);
-	ArgParser &refOption(const std::string &name,const std::string &help,std::string&,bool mandatory=false);
-	ArgParser &refOption(const std::string &name,const std::string &help,int&,bool);
-	ArgParser &refOption(const std::string &name,const std::string &help,double&,bool);
-	ArgParser &run();
+	void boolOption(const char*,const char*,bool mandatory=false);
+	void refOption(const std::string &name,const std::string &help,std::string&,bool mandatory=false);
+	void refOption(const std::string &name,const std::string &help,int&,bool mandatory=false);
+	void refOption(const std::string &name,const std::string &help,double&,bool mandatory=false);
+    //void &refOption(const std::string &name,const std::string &help,bool&,bool mandatory=false);
+	void run();
 };
 
 

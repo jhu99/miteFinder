@@ -7,6 +7,7 @@
 //
 
 #include "argparser.h"
+#include <math.h>
 
 ArgParser::ArgParser(int argc, const char** argv){
 	optnum=argc;
@@ -19,24 +20,25 @@ ArgParser::ArgParser(int argc, const char** argv){
 			parValues.push(argv[i]);
 		}
 	}
+    boolOption("help","Show help information");
+    boolOption("version","Show the current version.");
 }
 ArgParser::~ArgParser(){
-    boolOption("help", "");
-    boolOption("version", "Show the current version.");
 }
-void ArgParser::boolOption(const char* optName, const char* help){
+void ArgParser::boolOption(const char* optName, const char* help,bool mandatory){
     std::string opt=optName;
     ParData obj;
     obj.type=BOOL;
     obj.help=help;
+    obj.mandatory=mandatory;
     if(para_map.find(opt)!=para_map.end()){
         std::cerr <<"Warning: Duplicate options were used!"<< std::endl;
     }else{
         para_map[opt]=obj;
     }
 }
-ArgParser &ArgParser::refOption(const std::string &optName,const std::string &help,
-                                int &refVariable,bool mandatory=false){
+void ArgParser::refOption(const std::string &optName,const std::string &help,
+                                int &refVariable,bool mandatory){
     std::string opt=optName;
     ParData obj;
     obj.type=INTEGER;
@@ -48,9 +50,8 @@ ArgParser &ArgParser::refOption(const std::string &optName,const std::string &he
     }else{
         para_map[opt]=obj;
     }
-    return *this;
 }
-ArgParser &ArgParser::refOption(const std::string &optName,const std::string &help,
+void ArgParser::refOption(const std::string &optName,const std::string &help,
                                 std::string &refVariable,bool mandatory){
     std::string opt=optName;
     ParData obj;
@@ -63,10 +64,9 @@ ArgParser &ArgParser::refOption(const std::string &optName,const std::string &he
     }else{
         para_map[opt]=obj;
     }
-    return *this;
 }
-ArgParser &ArgParser::refOption(const std::string &optName,const std::string &help,
-                                double &refVariable,bool mandatory=false){
+void ArgParser::refOption(const std::string &optName,const std::string &help,
+                                double &refVariable,bool mandatory){
     std::string opt=optName;
     ParData obj;
     obj.type=DOUBLE;
@@ -78,23 +78,38 @@ ArgParser &ArgParser::refOption(const std::string &optName,const std::string &he
     }else{
         para_map[opt]=obj;
     }
-    return *this;
 }
-ArgParser &ArgParser::run()
+void ArgParser::run()
 {
-    int n=args.size();
-    for(int i=0; i<n;i++)
-    {
+    // check mandatory
+    // check help version
+    //
+    while(!args.empty()){
         std::string optname=args.front();
         std::unordered_map<std::string, ParData>::iterator it=para_map.find(optname);
-        if (it!=para_map.end())
-        {
-            *it->second.pString=parValues.front();
+        if (it!=para_map.end()){
+            switch (it->second.type) {
+                case UNKNOWN:
+                    break;
+                case BOOL:
+                    //it->second.pBool=it
+                    break;
+                case STRING:
+                    *it->second.pString=parValues.front();
+                    break;
+                case DOUBLE:
+                    *it->second.pDouble=atof(parValues.front().c_str());
+                    break;
+                case INTEGER:
+                    *it->second.pInt=atoi(parValues.front().c_str());
+                    break;
+                case FUNC:
+                    break;
+            }
         }
         args.pop();
         parValues.pop();
     }
-    return *this;
 }
 
 
