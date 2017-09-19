@@ -23,6 +23,6 @@ miteFinderTest: tests/miteFinderTest.cpp lib/genome.o lib/mite.o
 patternLearningTest: tests/patternTest.cpp lib/genome.o
 	${CXX} ${CXXFLAGS} -o $@ $^
 ArgParserTest: tests/testargparser.cpp
-    ${CXX} ${CXXFLAGS} -o $@ $^
+	${CXX} ${CXXFLAGS} -o $@ $^
 clean:
 	rm lib/*.o
