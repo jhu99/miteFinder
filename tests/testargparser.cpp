@@ -28,7 +28,9 @@ int main(int argc, const char * argv[]) {
     parser.refOption("input", "The path of input file.", opt.filename,1);
     parser.refOption("num", "The number of species.", opt.integer,0);
     parser.refOption("ratio", "The ratio of something.", opt.ratio,0);
-    parser.run();
+    if (!parser.run())
+    return 0;
+    else
     std::cout << opt.integer << opt.filename << opt.ratio << std::endl;
     return 0;
 }
