@@ -7,7 +7,7 @@
 //
 
 #include "argparser.h"
-#include <math.h>
+#include <stdlib.h>
 
 ArgParser::ArgParser(int argc, const char** argv){
 	optnum=argc;
@@ -79,7 +79,19 @@ void ArgParser::refOption(const std::string &optName,const std::string &help,
         para_map[opt]=obj;
     }
 }
-void ArgParser::run()
+bool ArgParser::checkMandatories()
+{
+    for (std::unordered_map<std::string, ParData>::iterator it=para_map.begin();it!=para_map.end();it++)
+    {
+        if (it->second.mandatory==1&&it->second.sign==false)
+        {
+            std::cout <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+bool ArgParser::run()
 {
     // check mandatory
     // check help version
@@ -88,6 +100,7 @@ void ArgParser::run()
         std::string optname=args.front();
         std::unordered_map<std::string, ParData>::iterator it=para_map.find(optname);
         if (it!=para_map.end()){
+            it->second.sign=true;
             switch (it->second.type) {
                 case UNKNOWN:
                     break;
@@ -98,10 +111,20 @@ void ArgParser::run()
                     *it->second.pString=parValues.front();
                     break;
                 case DOUBLE:
-                    *it->second.pDouble=atof(parValues.front().c_str());
+                    {
+                        if (atof(parValues.front().c_str())==0)
+                        std::cout <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
+                        else
+                        *it->second.pDouble=atof(parValues.front().c_str());
+                    }
                     break;
                 case INTEGER:
-                    *it->second.pInt=atoi(parValues.front().c_str());
+                    {
+                        if (atoi(parValues.front().c_str())==0)
+                        std::cout <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
+                        else
+                        *it->second.pInt=atoi(parValues.front().c_str());
+                    }
                     break;
                 case FUNC:
                     break;
@@ -110,8 +133,5 @@ void ArgParser::run()
         args.pop();
         parValues.pop();
     }
+    return ArgParser::checkMandatories();
 }
-
-
-
-
