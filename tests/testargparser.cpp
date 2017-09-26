@@ -29,8 +29,8 @@ int main(int argc, const char * argv[]) {
     parser.refOption("num", "The number of species.", opt.integer,0);
     parser.refOption("ratio", "The ratio of something.", opt.ratio,0);
     if (!parser.run())
-    return 0;
+		return 0;
     else
-    std::cout << opt.integer << opt.filename << opt.ratio << std::endl;
+		std::cout << opt.integer << opt.filename << opt.ratio << std::endl;
     return 0;
 }

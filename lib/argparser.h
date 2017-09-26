@@ -35,7 +35,7 @@ private:
 		bool sign;
         OptType type;
         bool has_syn;
-        ParData():mandatory(false), type(UNKNOWN), has_syn(false){
+        ParData():mandatory(false), sign(false), type(UNKNOWN), has_syn(false){
         }
         ~ParData(){}
     };
@@ -51,6 +51,8 @@ public:
     //void &refOption(const std::string &name,const std::string &help,bool&,bool mandatory=false);
 	bool run();
 	bool checkMandatories();
+	void showUsages();
+	void showOptions();
 };
 
 

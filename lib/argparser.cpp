@@ -12,6 +12,7 @@
 ArgParser::ArgParser(int argc, const char** argv){
 	optnum=argc;
 	const char* pArg;
+	commandName=argv[0];
 	for(int i=1;i<argc;i++){
 		if(argv[i][0]=='-'){
 			pArg=&argv[i][1];
@@ -20,7 +21,7 @@ ArgParser::ArgParser(int argc, const char** argv){
 			parValues.push(argv[i]);
 		}
 	}
-    boolOption("help","Show help information");
+    boolOption("help","Show help information.");
     boolOption("version","Show the current version.");
 }
 ArgParser::~ArgParser(){
@@ -79,13 +80,38 @@ void ArgParser::refOption(const std::string &optName,const std::string &help,
         para_map[opt]=obj;
     }
 }
+void ArgParser::showUsages()
+{
+	std::cout <<"Usage: "<< commandName<<" ";
+	for(std::unordered_map<std::string, ParData>::iterator it=para_map.begin();it!=para_map.end();it++)
+	{
+		if(!it->second.mandatory)
+			std::cout <<" [";
+		if(it->second.type==STRING)
+			std::cout <<"-"<<it->first<<" STRING";
+		if(it->second.type==INTEGER)
+			std::cout <<"-"<<it->first<<" INTEGER";
+		if(it->second.type==DOUBLE)
+		std::cout <<"-"<<it->first<<" DOUBLE";
+		if(it->second.type==BOOL)
+			std::cout <<"-"<<it->first;
+		if(!it->second.mandatory)
+			std::cout <<"]";
+	}
+	std::cout <<std::endl;
+}
+void ArgParser::showOptions()
+{
+	std::cout <<""<<std::endl;
+}
 bool ArgParser::checkMandatories()
 {
     for (std::unordered_map<std::string, ParData>::iterator it=para_map.begin();it!=para_map.end();it++)
     {
         if (it->second.mandatory==1&&it->second.sign==false)
         {
-            std::cout <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
+            std::cout <<"WARNING:"<<"The parameter "<<it->first<<" should be specified."<< std::endl;
+			showUsages();
             return false;
         }
     }
