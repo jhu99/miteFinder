@@ -32,6 +32,7 @@ private:
         };
         std::string help;
         bool mandatory;
+		bool sign;
         OptType type;
         bool has_syn;
         ParData():mandatory(false), type(UNKNOWN), has_syn(false){
@@ -48,7 +49,8 @@ public:
 	void refOption(const std::string &name,const std::string &help,int&,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,double&,bool mandatory=false);
     //void &refOption(const std::string &name,const std::string &help,bool&,bool mandatory=false);
-	void run();
+	bool run();
+	bool checkMandatories();
 };
 
 
