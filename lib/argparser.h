@@ -21,6 +21,8 @@ private:
 	std::queue<std::string> args;
 	std::queue<std::string> parValues;
     std::string commandName;
+    std::string commandDesc;
+    std::string commandVersion;
     enum OptType { UNKNOWN=0, BOOL=1, STRING=2, DOUBLE=3, INTEGER=4, FUNC=5 };
     class ParData{
     public:
@@ -44,11 +46,12 @@ private:
 public:
 	ArgParser(int,const char**);
 	~ArgParser();
+    void setName(const char*,const char*);
+    void setVerion(const char*);
 	void boolOption(const char*,const char*,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,std::string&,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,int&,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,double&,bool mandatory=false);
-    //void &refOption(const std::string &name,const std::string &help,bool&,bool mandatory=false);
 	bool run();
 	bool checkMandatories();
 	void showUsages();

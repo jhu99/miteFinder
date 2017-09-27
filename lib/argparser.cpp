@@ -12,7 +12,7 @@
 ArgParser::ArgParser(int argc, const char** argv){
 	optnum=argc;
 	const char* pArg;
-	commandName=argv[0];
+	//commandName=argv[0];
 	for(int i=1;i<argc;i++){
 		if(argv[i][0]=='-'){
 			pArg=&argv[i][1];
@@ -25,6 +25,15 @@ ArgParser::ArgParser(int argc, const char** argv){
     boolOption("version","Show the current version.");
 }
 ArgParser::~ArgParser(){
+}
+void ArgParser::setName(const char* comName,const char* comDesc)
+{
+    commandName=comName;
+    commandDesc=comDesc;
+}
+void ArgParser::setVerion(const char* version)
+{
+    commandVersion=version;
 }
 void ArgParser::boolOption(const char* optName, const char* help,bool mandatory){
     std::string opt=optName;
@@ -82,27 +91,47 @@ void ArgParser::refOption(const std::string &optName,const std::string &help,
 }
 void ArgParser::showUsages()
 {
-	std::cout <<"Usage: "<< commandName<<" ";
+	std::cerr <<"USAGE: "<< commandName<<" ";
 	for(std::unordered_map<std::string, ParData>::iterator it=para_map.begin();it!=para_map.end();it++)
 	{
 		if(!it->second.mandatory)
-			std::cout <<" [";
+			std::cerr <<" [";
 		if(it->second.type==STRING)
-			std::cout <<"-"<<it->first<<" STRING";
+			std::cerr <<"-"<<it->first<<" STRING";
 		if(it->second.type==INTEGER)
-			std::cout <<"-"<<it->first<<" INTEGER";
+			std::cerr <<"-"<<it->first<<" INTEGER";
 		if(it->second.type==DOUBLE)
-		std::cout <<"-"<<it->first<<" DOUBLE";
+		std::cerr <<"-"<<it->first<<" DOUBLE";
 		if(it->second.type==BOOL)
-			std::cout <<"-"<<it->first;
+			std::cerr <<"-"<<it->first;
 		if(!it->second.mandatory)
-			std::cout <<"]";
+			std::cerr <<"]";
 	}
-	std::cout <<std::endl;
+	std::cerr <<std::endl;
+    std::cerr <<"DESCRIPTION: "<<commandDesc<<std::endl;
 }
 void ArgParser::showOptions()
 {
-	std::cout <<""<<std::endl;
+    showUsages();
+    std::cerr <<"OPTIONAL ARGUMENTS: "<<std::endl;
+    for(std::unordered_map<std::string, ParData>::iterator it=para_map.begin();it!=para_map.end();it++)
+    {
+        std::cerr << "-" << it->first<<"\t" << it->second.help<< std::endl;
+        
+        /*if(!it->second.mandatory)
+            std::cerr <<" [";
+        if(it->second.type==STRING)
+            std::cerr <<"-"<<it->first<<" STRING";
+        if(it->second.type==INTEGER)
+            std::cerr <<"-"<<it->first<<" INTEGER";
+        if(it->second.type==DOUBLE)
+            std::cerr <<"-"<<it->first<<" DOUBLE";
+        if(it->second.type==BOOL)
+            std::cerr <<"-"<<it->first;
+        if(!it->second.mandatory)
+            std::cerr <<"]";*/
+    }
+    
 }
 bool ArgParser::checkMandatories()
 {
@@ -110,8 +139,9 @@ bool ArgParser::checkMandatories()
     {
         if (it->second.mandatory==1&&it->second.sign==false)
         {
-            std::cout <<"WARNING:"<<"The parameter "<<it->first<<" should be specified."<< std::endl;
+            std::cerr <<"WARNING: "<<"The parameter "<<it->first<<" should be specified."<< std::endl;
 			showUsages();
+            showOptions();
             return false;
         }
     }
@@ -139,7 +169,7 @@ bool ArgParser::run()
                 case DOUBLE:
                     {
                         if (atof(parValues.front().c_str())==0)
-                        std::cout <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
+                        std::cerr <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
                         else
                         *it->second.pDouble=atof(parValues.front().c_str());
                     }
@@ -147,7 +177,7 @@ bool ArgParser::run()
                 case INTEGER:
                     {
                         if (atoi(parValues.front().c_str())==0)
-                        std::cout <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
+                        std::cerr <<"WARNING:"<<"The "<<it->first<<" should be "<<it->second.help <<std::endl;
                         else
                         *it->second.pInt=atoi(parValues.front().c_str());
                     }
