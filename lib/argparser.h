@@ -44,18 +44,21 @@ private:
     std::unordered_map<std::string, ParData> para_map;
     static void _showHelp(void *p);
 public:
-	ArgParser(int,const char**);
+	ArgParser();
 	~ArgParser();
     void setName(const char*,const char*);
     void setVerion(const char*);
 	void boolOption(const char*,const char*,bool mandatory=false);
-	void refOption(const std::string &name,const std::string &help,std::string&,bool mandatory=false);
-	void refOption(const std::string &name,const std::string &help,int&,bool mandatory=false);
-	void refOption(const std::string &name,const std::string &help,double&,bool mandatory=false);
-	bool run();
+	void refOption(const std::string &name,const std::string &help,std::string&,std::string,bool mandatory=false);
+	void refOption(const std::string &name,const std::string &help,int&,int,bool mandatory=false);
+	void refOption(const std::string &name,const std::string &help,double&,double,bool mandatory=false);
+	bool run(int,const char**);
 	bool checkMandatories();
+	bool checkParaValue(int,const char**);
 	void showUsages();
 	void showOptions();
+	void showVersion();
+	void showLicense();
 };
 
 

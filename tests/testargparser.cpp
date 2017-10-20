@@ -24,13 +24,13 @@ struct Option{
 int main(int argc, const char * argv[]) {
     // insert code here...
     Option opt;
-    ArgParser parser(argc,argv);
+    ArgParser parser;
     parser.setName("ArgParserTest","This is a test for parsing arguments.");
     parser.setVerion("0.0.066");
-    parser.refOption("input", "The path of input file.", opt.filename,1);
-    parser.refOption("num", "The number of species.", opt.integer,0);
-    parser.refOption("ratio", "The ratio of something.", opt.ratio,0);
-    if (!parser.run())
+    parser.refOption("input", "The path of input file.", opt.filename,"",1);
+    parser.refOption("num", "The number of species.", opt.integer,6,0);
+    parser.refOption("ratio", "The ratio of something.", opt.ratio,0.6,0);
+    if (!parser.run(argc,argv))
 		return 0;
     else
 		std::cout << opt.integer << opt.filename << opt.ratio << std::endl;
