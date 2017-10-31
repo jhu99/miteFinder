@@ -11,29 +11,46 @@
 #include "genome.h"
 #include "mite.h"
 #include "mite_finder.h"
+#include "argparser.h"
+
+struct Option{
+    std::string inputfilename;
+    std::string outputfilename;
+    bool enable_mismatch;
+    int fragnment_length;
+    Option(){
+        enable_mismatch=true;
+        fragnment_length=10000;
+    }
+};
 
 int main(int argc, const char * argv[]) {
-    std::string filename="/Users/jialu/Research/datasets/OSgenomeV6.man";
-    bool enable_mismatch=true;
 	double seconds=0;
+    ArgParser mf_paser;
+    Option mf_option;
     Genome osgenome;
+    
+    // Read DNA sequences from the input file.
 	time_t start_time,end_time;
 	time(&start_time);
-	osgenome.readSequence(filename);
+	osgenome.readSequence(mf_option.inputfilename);
     int numChr=osgenome.getNumChrom();
     Seed_set tset;
     std::fstream output;
-    output.open("/Users/jialu/Research/datasets/mite_candidates.fsa",std::ios_base::out);
+    
+    // Write MITEs to the output file.
+    output.open(mf_option.outputfilename,std::ios_base::out);
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
-		mite_finder(tset,pchr,enable_mismatch,10000,MIN_LENGTH_TIR);
+		mite_finder(tset,pchr,mf_option.enable_mismatch,mf_option.fragnment_length,MIN_LENGTH_TIR);
         write_seed(tset,pchr,output,i+1);
         tset.clear();
     }
 	time(&end_time);
+    
+    // Show the processing duration.
 	seconds= difftime(end_time, start_time);
 	std::cout << "The program cost "<<seconds<<" seconds totally to search for MITEs."<<std::endl;
-    output.close();
 	output.close();
     return 0;
 }
