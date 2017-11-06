@@ -26,9 +26,18 @@ struct Option{
 
 int main(int argc, const char * argv[]) {
 	double seconds=0;
-    ArgParser mf_paser;
+    ArgParser mf_parser;
     Option mf_option;
     Genome osgenome;
+    
+    // Parser the argument.
+    mf_parser.setName("MiteFinder", "An application for detecting miniature inverted-repeat transposable elements on a genome-wide scale.");
+    mf_parser.setVerion("Version 1.0.006");
+    mf_parser.refOption("input", "The path of a input file.", mf_option.inputfilename, "", true);
+    mf_parser.refOption("fragnment_length", "Length of fragnment. Default is 10000.", mf_option.fragnment_length, 10000);
+    //mf_parser.boolOption("enable_mismatch", "Logical. It can enable the detection of mismatch base pairs if 1, otherwise 0. Default is 1.");
+    if(!mf_parser.run(argc, argv))
+        return 1;
     
     // Read DNA sequences from the input file.
 	time_t start_time,end_time;
