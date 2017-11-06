@@ -18,7 +18,7 @@ else
 CXXFLAGS = -Wall -O3 -ffast-math -Ilib/ -std=c++0x -DNDEBUG
 endif
 all: miteFinderTest patternLearningTest ArgParserTest
-miteFinderTest: tests/miteFinderTest.cpp lib/genome.o lib/mite.o
+miteFinderTest: tests/miteFinderTest.cpp lib/genome.o lib/mite.o lib/argparser.o
 	${CXX} ${CXXFLAGS} -o $@ $^
 patternLearningTest: tests/patternTest.cpp lib/genome.o
 	${CXX} ${CXXFLAGS} -o $@ $^
