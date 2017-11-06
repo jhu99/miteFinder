@@ -142,8 +142,8 @@ bool search_seed(std::vector<int>* v1,
 
 bool extract_seed_from_map(Tir_map& tmap,
                            Seed_set& tset,
-                           int k=10,
-                           bool enable_mismatch=false
+                           int k,
+                           bool disable_mismatch
                            ) {
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
@@ -159,7 +159,7 @@ bool extract_seed_from_map(Tir_map& tmap,
             v2=tmap.at(standinvkey);
             search_seed(v1,v2,tset,0,0,k);
         }
-        if(enable_mismatch)
+        if(!disable_mismatch)
         {
             if(check_repeat_stretch(key))continue;
             invkey=standinvkey;
@@ -313,9 +313,9 @@ bool collapse_seed(Seed_set& tset, char* pchr) {
 
 bool mite_finder(Seed_set& seedset,
                  char* pChr,
-                 int enable_mismatch,
-                int fragLen=10000,
-                int k=10) {
+                 bool disable_mismatch,
+                int fragLen,
+                int k) {
   int len=(int)std::strlen(pChr);
   Tir_map tmap;
   char* pCurr = pChr;
@@ -332,7 +332,7 @@ bool mite_finder(Seed_set& seedset,
       build_kmer_index(tmap,fragment,pos,k);
       pos += fragLen-MAX_LENGTH_MITE;
     }
-    extract_seed_from_map(tmap,seedset,k,enable_mismatch);
+    extract_seed_from_map(tmap,seedset,k,disable_mismatch);
     clearMap(tmap);
     pCurr=pChr+pos;
   }

@@ -10,8 +10,6 @@
 #include <stdlib.h>
 
 ArgParser::ArgParser(){
-    boolOption("help","Show help information.");
-    boolOption("version","Show the current version.");
 }
 ArgParser::~ArgParser(){
 }
@@ -24,12 +22,14 @@ void ArgParser::setVerion(const char* version)
 {
     commandVersion=version;
 }
-void ArgParser::boolOption(const char* optName, const char* help,bool mandatory){
+void ArgParser::refOption(const char* optName, const char* help, bool &refVariable, bool dft,bool mandatory){
     std::string opt=optName;
     ParData obj;
     obj.type=BOOL;
     obj.help=help;
     obj.mandatory=mandatory;
+    obj.pBool=&refVariable;
+    *obj.pBool=dft;
     if(para_map.find(opt)!=para_map.end()){
         std::cerr <<"Warning: Duplicate options were used!"<< std::endl;
     }else{
@@ -88,6 +88,9 @@ void ArgParser::showUsages()
 	{
 		if(!it->second.mandatory)
 			std::cerr <<" [";
+        else{
+            std::cerr <<" ";
+        }
 		if(it->second.type==STRING)
 			std::cerr <<"-"<<it->first<<" STRING";
 		if(it->second.type==INTEGER)
@@ -174,7 +177,7 @@ bool ArgParser::run(int argc, const char** argv)
 							showVersion();
 							return false;
 						}else{
-							//it->second.pBool=
+                            *it->second.pBool=true;
 						}
 						break;
 					case STRING:

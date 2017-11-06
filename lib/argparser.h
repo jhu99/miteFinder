@@ -48,7 +48,7 @@ public:
 	~ArgParser();
     void setName(const char*,const char*);
     void setVerion(const char*);
-	void boolOption(const char*,const char*,bool mandatory=false);
+	void refOption(const char*,const char*,bool&,bool dft=false,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,std::string&,std::string,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,int&,int,bool mandatory=false);
 	void refOption(const std::string &name,const std::string &help,double&,double,bool mandatory=false);
