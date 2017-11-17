@@ -1,26 +1,25 @@
 #ifndef STRUCTURE_H_INCLUDED
 #define STRUCTURE_H_INCLUDED
+#include <unordered_map>
 
-class data
+using namespace std;
+
+struct Pattern_value
 {
-public:
-    double score1;double score2;int TP;int FP;
-    data(double s1,
-         double s2,
-         int T,
-         int F)
+    double score1;
+    double score2;
+    int TP;
+    int FP;
+    Pattern_value(double s1, double s2, int T, int F)
     {
         this->score1=s1;
         this->score2=s2;
         this->TP=T;
         this->FP=F;
     }
-    ~data(){}
 };
 
-#include <unordered_map>
-
-void readscore(unordered_map<string,data> &candidate)
+void readscore(std::unordered_map<string,data> &candidate)
 {
     string filepath="kmer_count.txt";
     string seq,temp;
@@ -58,14 +57,14 @@ void readscore(unordered_map<string,data> &candidate)
             }
             i=i+num+1;
         }
-        candidate.insert(pair<string,data>(seq,data(score1,score2,TP,FP)));
+        candidate.insert(pair<string,Pattern_value>(seq,Pattern_value(score1,score2,TP,FP)));
         getline(ifs,temp);
     }
     ifs.close();
 }
 void caculate_value(unordered_map<string,string> &mite,
                    unordered_map<string,double> &mitescore,
-                   unordered_map<string,data> &candidate)
+                   unordered_map<string,Pattern_value> &candidate)
 {
     string shortseq;
     double sum;
@@ -78,7 +77,7 @@ void caculate_value(unordered_map<string,string> &mite,
         for (int i=0;i<len-5;i++)
         {
             shortseq=iter1->second.substr(i,6);
-            unordered_map<string,data>::iterator iter=candidate.find(shortseq);
+            unordered_map<string,Pattern_value>::iterator iter=candidate.find(shortseq);
             if (iter!=candidate.end())
             sum=sum+iter->second.score1;
         }
