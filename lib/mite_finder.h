@@ -24,6 +24,7 @@
 typedef std::unordered_map<std::string,std::vector<int>*> Tir_map;
 // Data type for a set of seeds detected from chromosomes.
 typedef std::list<Seed> Seed_set;
+typedef std::unordered_map<std::string, Pattern_value> Pattern_map;
 
 bool clearMap(Tir_map& tmap) {
   for(auto it=tmap.begin();it!=tmap.end();++it){
@@ -340,5 +341,26 @@ bool mite_finder(Seed_set& seedset,
   remove_duplicate_seed(seedset);
   collapse_seed(seedset, pChr);
   return true;
+}
+
+bool filter_low_score_candidates(Seed_set& seedset,
+                                 char* pChr,
+                                 Pattern_map& pattern_map
+                                 ){
+    std::string pattern;
+    for(auto it=seedset.begin();it!=seedset.end();++it){
+        std::string candidate(pChr+it->pos1,it->pos4-it->pos1+1);
+        double score=0.0;
+        int end=it->pos4-LENGTH_PATTERN+1;
+        for(int i=it->pos1;i<=end;i++){
+            pattern=std::string(pChr+i,LENGTH_PATTERN);
+            if(pattern_map.find(pattern)!=pattern_map.end()){
+                score=score+pattern_map.at(pattern).score1;
+            }
+        }
+        score=score/(it->pos4-it->pos1+1);
+    }
+    
+    return true;
 }
 #endif /* mite_finder_h */

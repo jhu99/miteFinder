@@ -4,20 +4,6 @@
 
 using namespace std;
 
-struct Pattern_value
-{
-    double score1;
-    double score2;
-    int TP;
-    int FP;
-    Pattern_value(double s1, double s2, int T, int F)
-    {
-        this->score1=s1;
-        this->score2=s2;
-        this->TP=T;
-        this->FP=F;
-    }
-};
 
 void readscore(std::unordered_map<string,Pattern_value> &candidate, std::string filepath)
 {
@@ -61,7 +47,8 @@ void readscore(std::unordered_map<string,Pattern_value> &candidate, std::string 
     }
     ifs.close();
 }
-void caculate_value(unordered_map<string,string> &mite,
+
+/*void caculate_value(unordered_map<string,string> &mite,
                    unordered_map<string,double> &mitescore,
                    unordered_map<string,Pattern_value> &candidate)
 {
@@ -98,5 +85,5 @@ void caculate_value(unordered_map<string,string> &mite,
     outdata.close();
     cout << m1 <<endl;
     cout << m2 <<endl;
-}
+}*/
 #endif // STRUCTURE_H_INCLUDED
