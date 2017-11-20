@@ -19,12 +19,11 @@ struct Pattern_value
     }
 };
 
-void readscore(std::unordered_map<string,data> &candidate)
+void readscore(std::unordered_map<string,Pattern_value> &candidate, std::string filepath)
 {
-    string filepath="kmer_count.txt";
     string seq,temp;
-    double score1,score2;
-    int TP,FP;
+    double score1=0,score2=0;
+    int TP=0,FP=0;
     const char *fpath;
     fpath=filepath.c_str();
     ifstream ifs(fpath);
@@ -33,7 +32,7 @@ void readscore(std::unordered_map<string,data> &candidate)
     getline(ifs,temp);
     while(!ifs.eof())
     {
-        int temp_len=temp.length();
+        int temp_len=(int)temp.length();
         int site=0;
         char strnum[20];
         for (int i=0;i<=temp_len;)
@@ -72,7 +71,7 @@ void caculate_value(unordered_map<string,string> &mite,
     for (iter1=mite.begin();iter1!=mite.end();iter1++)
     {
         sum=0;
-        int len=iter1->second.length();
+        int len=(int)iter1->second.length();
         cout<<iter1->first<<endl;
         for (int i=0;i<len-5;i++)
         {

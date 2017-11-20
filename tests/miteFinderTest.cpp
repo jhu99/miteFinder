@@ -37,8 +37,8 @@ int main(int argc, const char * argv[]) {
     mf_parser.setVerion("1.0.006");
     mf_parser.refOption("help", "Show help information.", mf_option.help);
     mf_parser.refOption("version", "Show the current version.", mf_option.version);
-    mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "", true);
-    mf_parser.refOption("pattern_scoring", "The path of a scoring file.", mf_option.patternfilename, "./profile/pattern_scoring.txt", true);
+    mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "/Users/jialu/Research/datasets/OSgenomeV6.man");
+    mf_parser.refOption("pattern_scoring", "The path of a scoring file.", mf_option.patternfilename, "/Users/jialu/Research/miteFinder/profile/pattern_scoring.txt");
     mf_parser.refOption("output", "The path of an output file.", mf_option.outputfilename, "./defaut_output.fsa");
     mf_parser.refOption("fragnment_length", "Length of fragnment. Default is 10000.", mf_option.fragnment_length, 10000);
     mf_parser.refOption("disable_mismatch", "Logical. It can disable the detection of mismatch base pairs if 1, otherwise 0. Default is 0.", mf_option.disable_mismatch);
@@ -46,11 +46,11 @@ int main(int argc, const char * argv[]) {
         return 1;
     
     // Read DNA sequences from the input file.
-    std::unordered_map<std::string, data> pattern_map;
+    std::unordered_map<std::string, Pattern_value> pattern_map;
 	time_t start_time,end_time;
 	time(&start_time);
 	osgenome.readSequence(mf_option.inputfilename);
-    readscore(pattern_map);
+    readscore(pattern_map,mf_option.patternfilename);
     int numChr=osgenome.getNumChrom();
     Seed_set tset;
     std::fstream output;
