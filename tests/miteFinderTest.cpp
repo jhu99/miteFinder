@@ -18,6 +18,7 @@ struct Option{
     std::string inputfilename;
     std::string outputfilename;
     std::string patternfilename;
+    double threshold;
     bool help;
     bool version;
     bool disable_mismatch;
@@ -37,11 +38,12 @@ int main(int argc, const char * argv[]) {
     mf_parser.setVerion("1.0.006");
     mf_parser.refOption("help", "Show help information.", mf_option.help);
     mf_parser.refOption("version", "Show the current version.", mf_option.version);
-    mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "/Users/jialu/Research/datasets/OSgenomeV6.man");
-    mf_parser.refOption("pattern_scoring", "The path of a scoring file.", mf_option.patternfilename, "/Users/jialu/Research/miteFinder/profile/pattern_scoring.txt");
+    mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "");
+    mf_parser.refOption("pattern_scoring", "The path of a scoring file.", mf_option.patternfilename, "./profile/pattern_scoring.txt");
     mf_parser.refOption("output", "The path of an output file.", mf_option.outputfilename, "./defaut_output.fsa");
     mf_parser.refOption("fragnment_length", "Length of fragnment. Default is 10000.", mf_option.fragnment_length, 10000);
     mf_parser.refOption("disable_mismatch", "Logical. It can disable the detection of mismatch base pairs if 1, otherwise 0. Default is 0.", mf_option.disable_mismatch);
+    mf_parser.refOption("threshold", "Threshold of removing mite candidates with low-confidence score. Default is 0.", mf_option.threshold, 1.5);
     if(!mf_parser.run(argc, argv))
         return 1;
     
@@ -60,6 +62,8 @@ int main(int argc, const char * argv[]) {
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
 		mite_finder(tset,pchr,mf_option.disable_mismatch,mf_option.fragnment_length,MIN_LENGTH_TIR);
+        filter_low_score_candidates(tset,pchr,pattern_map,mf_option.threshold);
+        std::cout << "#Chromosome "<<i <<": "<< tset.size() <<std::endl;
         write_seed(tset,pchr,output,i+1);
         tset.clear();
     }
@@ -67,7 +71,7 @@ int main(int argc, const char * argv[]) {
     
     // Show the processing duration.
 	seconds= difftime(end_time, start_time);
-	std::cout << "The program cost "<<seconds<<" seconds totally to search for MITEs."<<std::endl;
+	std::cout << "##############\n#The program cost "<<seconds<<" seconds totally to search for MITEs."<<std::endl;
 	output.close();
     return 0;
 }

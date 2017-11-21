@@ -345,11 +345,12 @@ bool mite_finder(Seed_set& seedset,
 
 bool filter_low_score_candidates(Seed_set& seedset,
                                  char* pChr,
-                                 Pattern_map& pattern_map
+                                 Pattern_map& pattern_map,
+                                 double threshold
                                  ){
     std::string pattern;
-    for(auto it=seedset.begin();it!=seedset.end();++it){
-        std::string candidate(pChr+it->pos1,it->pos4-it->pos1+1);
+    Seed_set::iterator it=seedset.begin();
+    while(it!=seedset.end()){
         double score=0.0;
         int end=it->pos4-LENGTH_PATTERN+1;
         for(int i=it->pos1;i<=end;i++){
@@ -358,7 +359,15 @@ bool filter_low_score_candidates(Seed_set& seedset,
                 score=score+pattern_map.at(pattern).score1;
             }
         }
-        score=score/(it->pos4-it->pos1+1);
+        //std::cout << score <<"\t";
+        score=score/(it->pos4 - it->pos1 -LENGTH_PATTERN +2);
+        //std::cout << score << std::endl;
+        if(score<threshold){
+            it=seedset.erase(it);
+        }
+        else{
+            it++;
+        }
     }
     
     return true;
