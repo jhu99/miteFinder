@@ -232,7 +232,7 @@ bool write_seed(Seed_set& tset,
     int chrlen=(int)strlen(pchr);
     for(auto it=tset.begin();it!=tset.end();++it) {
         output << ">mite|"<<chr<<"|"<<it->pos1 << "|" << it->pos2 << "|"
-        << it->pos3 <<"|"<<it->pos4<<"|t"<<it->tsd<<"|"<<it->mis_tirpos<<"|m"<<it->mismatch_tir<<std::endl;
+        << it->pos3 <<"|"<<it->pos4<<"|t"<<it->tsd<<"|"<<it->mis_tirpos<<"|m"<<it->mismatch_tir<<"|ave_score:"<<it->ave_score<<std::endl;
 		if(write_flank){
 			start=it->pos1-LENGTH_FLANK;
 			end=it->pos4+LENGTH_FLANK+1;
@@ -359,17 +359,15 @@ bool filter_low_score_candidates(Seed_set& seedset,
                 score=score+pattern_map.at(pattern).score1;
             }
         }
-        //std::cout << score <<"\t";
         score=score/(it->pos4 - it->pos1 -LENGTH_PATTERN +2);
-        //std::cout << score << std::endl;
         if(score<threshold){
             it=seedset.erase(it);
         }
         else{
+            it->ave_score=score;
             it++;
         }
     }
-    
     return true;
 }
 #endif /* mite_finder_h */
