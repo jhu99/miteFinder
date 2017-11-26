@@ -38,7 +38,7 @@ int main(int argc, const char * argv[]) {
     mf_parser.setVerion("1.0.006");
     mf_parser.refOption("help", "Show help information.", mf_option.help);
     mf_parser.refOption("version", "Show the current version.", mf_option.version);
-    mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "");
+    mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "",true);
     mf_parser.refOption("pattern_scoring", "The path of a scoring file.", mf_option.patternfilename, "./profile/pattern_scoring.txt");
     mf_parser.refOption("output", "The path of an output file.", mf_option.outputfilename, "./defaut_output.fsa");
     mf_parser.refOption("fragnment_length", "Length of fragnment. Default is 10000.", mf_option.fragnment_length, 10000);
