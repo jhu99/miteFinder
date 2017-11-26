@@ -14,6 +14,7 @@ public:
     int tsd;
     int mismatch_tir;
     int mis_tirpos;
+	double ave_score;
     Seed()
     {
         this->pos1=1;
