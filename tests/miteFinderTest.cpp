@@ -40,7 +40,7 @@ int main(int argc, const char * argv[]) {
     mf_parser.refOption("version", "Show the current version.", mf_option.version);
     mf_parser.refOption("input", "The path of an input file.", mf_option.inputfilename, "",true);
     mf_parser.refOption("pattern_scoring", "The path of a scoring file.", mf_option.patternfilename, "./profile/pattern_scoring.txt");
-    mf_parser.refOption("output", "The path of an output file.", mf_option.outputfilename, "./defaut_output.fsa");
+    mf_parser.refOption("output", "The path of an output file. Default is ./default_output.fsa", mf_option.outputfilename, "./defaut_output.fsa");
     mf_parser.refOption("fragnment_length", "Length of fragnment. Default is 10000.", mf_option.fragnment_length, 10000);
     mf_parser.refOption("disable_mismatch", "Logical. It can disable the detection of mismatch base pairs if 1, otherwise 0. Default is 0.", mf_option.disable_mismatch);
     mf_parser.refOption("threshold", "Threshold of removing mite candidates with low-confidence score. Default is 0.5.", mf_option.threshold, 1.5);
