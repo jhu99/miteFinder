@@ -63,7 +63,7 @@ int main(int argc, const char * argv[]) {
         char* pchr=osgenome.getChrom(i);
 		mite_finder(tset,pchr,mf_option.disable_mismatch,mf_option.fragnment_length,MIN_LENGTH_TIR);
         filter_low_score_candidates(tset,pchr,pattern_map,mf_option.threshold);
-        std::cout << "#Chromosome "<<i <<": "<< tset.size() <<std::endl;
+        std::cout << "#Sequence "<<i <<": "<< tset.size() <<std::endl;
         write_seed(tset,pchr,output,i+1);
         tset.clear();
     }
