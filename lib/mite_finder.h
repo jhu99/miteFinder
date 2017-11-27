@@ -103,6 +103,8 @@ bool build_kmer_index(Tir_map& tirmap,
     for(int i=0;i<=len-k;i++)
     {
         std::string key=fragment.substr(i,k);
+        if(key.find_first_of('N')!=std::string::npos)
+            continue;
         if(tirmap.find(key)!=tirmap.end())
         {
             tirmap.at(key)->push_back(pos+i);
