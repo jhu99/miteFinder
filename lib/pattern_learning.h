@@ -12,6 +12,7 @@
 #include "genome.h"
 #include <cstring>
 #include <string>
+#include <math.h>
 #include <unordered_map>
 const int LENGTH_KMER=6;
 
