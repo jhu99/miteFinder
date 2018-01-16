@@ -10,6 +10,7 @@
 #define pattern_learning_h
 
 #include "genome.h"
+#include <cstring>
 #include <string>
 #include <unordered_map>
 const int LENGTH_KMER=6;
