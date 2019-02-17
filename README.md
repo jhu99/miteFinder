@@ -42,7 +42,7 @@ Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin
 
 # Example
 
-./miteFinder -input ${your_input_file} -output ${your_output_file} -pattern_scoring ./profile/pattern_scoring.txt -threshold 0.5
+./bin/miteFinder -input ${your_input_file} -output ${your_output_file} -pattern_scoring ./profile/pattern_scoring.txt -threshold 0.5
 
 Warning: Your input file should be in sequences or genomes in fasta format.
 ################################################################################
