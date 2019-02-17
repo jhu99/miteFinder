@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ################################################################################
 
-Description
+# Description
 
 We have geneated binary code fro Unix-like, Mac, and Windows users (see in $miteFinder/bin)
 Normally, it will works on machines with x86_64.
@@ -29,7 +29,8 @@ Normally, it will works on machines with x86_64.
 If it doesn't work, you need to compile the source code for your own.
 ################################################################################
 
-Compile
+# Compile
+
 To compile the source code, the latest compilers which supports the standard language C++11, also known as C++0x, is needed. Other older compiler may not support it.
 
 Use the code as the following:
@@ -46,6 +47,6 @@ Run miteFinder on an example
 Warning: Your input file should be in sequences or genomes in fasta format.
 ################################################################################
 
-END
+# END
 THANKS FOR READING
 If you have any questions regarding to the program, please don't hesitate to contact us through email.
