@@ -47,6 +47,11 @@ Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin
 Warning: Your input file should be in sequences or genomes in fasta format.
 ################################################################################
 
+# Citation
+
+Hu, Jialu and Zheng, Yan and Shang, Xuequn, "MiteFinderII: a novel tool to identify miniature inverted-repeat transposable elements hidden in eukaryotic genomes", BMC Medical Genomics, 2018, 11(5), 101.
+
+################################################################################
 # END
 THANKS FOR READING
 If you have any questions regarding to the program, please don't hesitate to contact us through email.
