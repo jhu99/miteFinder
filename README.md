@@ -1,5 +1,6 @@
 # miteFinder
 ################################################################################
+
 AUTHOR: JIALU HU
 EMAIL: jhu@nwpu.edu.cn
 
@@ -19,12 +20,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ################################################################################
+
 Description
+
 We have geneated binary code fro Unix-like, Mac, and Windows users (see in $miteFinder/bin)
 Normally, it will works on machines with x86_64.
 
 If it doesn't work, you need to compile the source code for your own.
 ################################################################################
+
 Compile
 To compile the source code, the latest compilers which supports the standard language C++11, also known as C++0x, is needed. Other older compiler may not support it.
 
@@ -32,24 +36,16 @@ Use the code as the following:
 cd $miteFinder
 make
 
-Finished :)
+Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin. Finished :)
 ################################################################################
-Example
-1. Download dataset
 
-Our datasets are freely available at our website: https://code.google.com/p/netcoffee/downloads/list.
-Download it into the folder of $NETCOFFEE and uncompress it with command:
-tar -zxvf dataset.tar.gz
-2. Compile source code
-Compile the source code with command:
-make MODE=Release
-3. Run NetCoffee on our test dataset-2 with command:
-./bin/netcoffee -alignment -task 1 -out -alpha ${ALPHA} -numspecies ${num} -numthreads ${thread num} -alignmentfile ./result/alignment_netcoffee.data -resultfolder ./result/
-${ALPHA} is the parameter you want to specify for alpha.
-Then you can find the all the involved output files in ./result/ .
-There are many other functions which you can see with "-help" option.
+Run miteFinder on an example
 
+./miteFinder -input ${your_input_file} -output ${your_output_file} -pattern_scoring ./profile/pattern_scoring.txt -threshold 0.5
+
+Warning: Your input file should be in sequences or genomes in fasta format.
 ################################################################################
+
 END
 THANKS FOR READING
 If you have any questions regarding to the program, please don't hesitate to contact us through email.
