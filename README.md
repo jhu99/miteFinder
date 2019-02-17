@@ -40,7 +40,7 @@ make
 Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin. Finished :)
 ################################################################################
 
-Run miteFinder on an example
+# Example
 
 ./miteFinder -input ${your_input_file} -output ${your_output_file} -pattern_scoring ./profile/pattern_scoring.txt -threshold 0.5
 
