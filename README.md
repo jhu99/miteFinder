@@ -34,10 +34,13 @@ If it doesn't work, you need to compile the source code for your own.
 To compile the source code, the latest compilers which supports the standard language C++11, also known as C++0x, is needed. Other older compiler may not support it.
 
 Use the code as the following:
+
 cd $miteFinder
+
 make
 
-Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin. Finished :)
+Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin. 
+Finished :)
 ################################################################################
 
 # Example
@@ -54,4 +57,5 @@ Hu, Jialu and Zheng, Yan and Shang, Xuequn, "MiteFinderII: a novel tool to ident
 ################################################################################
 # END
 THANKS FOR READING
+
 If you have any questions regarding to the program, please don't hesitate to contact us through email.
