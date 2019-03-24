@@ -57,6 +57,7 @@ GTTGCTCACCCCTGCTCTTGAGCCTTTGAAACATCTACACCAATTTTTTATTGTTTTCAT
 CTATCCGTTTAAGTGGATTAAAATGATGTTTTTTAATTTTTTTTTATATTTTTTGGGCCG
 AAAAAACGGACAGCATTGAAAAAAGCCAAGTTTTATTTAATTTAAGAAAAAATAGTCCAA
 CCAAATGGTTTAA
+
 The 6 means the serial number of chromosome and 4131,4140,4194,4203 is the position of TIR. t3 means the length of TSD is 3. m1 means the TIR is the imperfect inverted repeats and 4138 is the mismatch base. The ave_score:0.649614 is the score of MITE sequence(The more details can be seen in the below citation).
 ################################################################################
 
