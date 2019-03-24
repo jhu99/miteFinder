@@ -50,6 +50,16 @@ Finished :)
 Warning: Your input file should be in sequences or genomes in fasta format.
 ################################################################################
 
+# Result
+The description of the MITE is just like this：
+>mite|6|4131|4140|4194|4203|t3|4138|m1|ave_score:0.649614
+GTTGCTCACCCCTGCTCTTGAGCCTTTGAAACATCTACACCAATTTTTTATTGTTTTCAT
+CTATCCGTTTAAGTGGATTAAAATGATGTTTTTTAATTTTTTTTTATATTTTTTGGGCCG
+AAAAAACGGACAGCATTGAAAAAAGCCAAGTTTTATTTAATTTAAGAAAAAATAGTCCAA
+CCAAATGGTTTAA
+The 6 means the serial number of chromosome and 4131,4140,4194,4203 is the position of TIR. t3 means the length of TSD is 3. m1 means the TIR is the imperfect inverted repeats and 4138 is the mismatch base. The ave_score:0.649614 is the score of MITE sequence(The more details can be seen in the below citation).
+################################################################################
+
 # Citation
 
 Hu, Jialu and Zheng, Yan and Shang, Xuequn, "MiteFinderII: a novel tool to identify miniature inverted-repeat transposable elements hidden in eukaryotic genomes", BMC Medical Genomics, 2018, 11(5), 101.
