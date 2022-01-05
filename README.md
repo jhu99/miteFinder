@@ -63,7 +63,7 @@ The 6 means the serial number of chromosome and 4131,4140,4194,4203 is the posit
 
 # Citation
 
-Hu, Jialu and Zheng, Yan and Shang, Xuequn, "MiteFinderII: a novel tool to identify miniature inverted-repeat transposable elements hidden in eukaryotic genomes", BMC Medical Genomics, 2018, 11(5), 101.
+Hu J, Zheng Y, Shang X. MiteFinderII: a novel tool to identify miniature inverted-repeat transposable elements hidden in eukaryotic genomes. BMC medical genomics. 2018 Nov;11(5):51-9. https://doi.org/10.1186/s12920-018-0418-y
 
 ################################################################################
 # END
