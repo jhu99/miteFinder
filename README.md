@@ -39,7 +39,7 @@ cd $miteFinder
 
 make
 
-Then the binary code "miteFidner" will be generated and moved to $miteFidner/bin. 
+Then the binary code "miteFinder" will be generated and moved to $miteFinder/bin. 
 Finished :)
 ################################################################################
 
