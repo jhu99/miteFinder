@@ -17,7 +17,7 @@ CXXFLAGS = -Wall -g3 -DDEBUG -std=c++0x -DVERBOSE -Ilib/
 else
 CXXFLAGS = -Wall -O3 -ffast-math -Ilib/ -std=c++0x -DNDEBUG
 endif
-all: miteFinder
+all: miteFinder move
 #patternLearningTest ArgParserTest move
 miteFinder: tests/miteFinderTest.cpp lib/genome.o lib/mite.o lib/argparser.o
 	${CXX} ${CXXFLAGS} -o $@ $^
