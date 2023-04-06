@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Description
 
-We have geneated binary code fro Unix-like, Mac, and Windows users (see in $miteFinder/bin)
+We have geneated binary code for Unix-like, Mac, and Windows users (see in $miteFinder/bin)
 Normally, it will works on machines with x86_64.
 
 If it doesn't work, you need to compile the source code for your own.
