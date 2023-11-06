@@ -1,17 +1,8 @@
-//
-//  main.cpp
-//  miteFinder
-//
-//  Created by Jialu HU on 16/10/14.
-//  Copyright © 2016年 Jialu HU. All rights reserved.
-//
 #include <iostream>
 #include <string>
 #include <time.h>
 #include "genome.h"
 #include "mite.h"
-#include "mite_finder.h"
-#include "pattern_scoring.h"
 #include "argparser.h"
 #include "ltr_finder.h"
 
@@ -53,16 +44,20 @@ int main(int argc, const char * argv[]) {
     int numChr=osgenome.getNumChrom();/*拟南芥：5条染色体*/
     cout<<"拟南芥："<<numChr<<"条染色体"<<endl;
     std::fstream output;
-    
+    match_set lset;
     // Write LTRs to the output file.
     output.open(ltrf_option.outputfilename,std::ios_base::out);
 
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
         // pchr：获取每一条染色体序列
-
-        ltr_finder(pchr,disable_mismatch);
-
+        cout<<"第"<<i<<"条染色体"<<endl;
+        ltr_finder(pchr,lset,disable_mismatch);
+		// mite_finder(tset,pchr,mf_option.disable_mismatch,mf_option.fragnment_length,MIN_LENGTH_TIR);
+        // filter_low_score_candidates(tset,pchr,pattern_map,mf_option.threshold);
+        // std::cout << "#Sequence "<<i <<": "<< tset.size() <<std::endl;
+        // write_seed(tset,pchr,output,i+1);
+        // tset.clear();
     }
 	time(&end_time);
     
