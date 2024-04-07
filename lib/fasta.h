@@ -6,7 +6,7 @@
 #include <stdlib.h>
 //#include <malloc.h>
 #include <fstream>
-
+#include <mutex>
 using namespace std;
 
 const int MAX_CHROSOME_NUM=100;
@@ -17,7 +17,11 @@ public:
     Genomes();
     ~Genomes();
     int readGenome(string);
-    string getFragment(int,int,int);
+    string getFragment(int,int,int); 
+    void readChromosomeSequence1(const string& filepath, int chrNum, int chrLength);
+
+    // 增加一个互斥锁来保护共享资源
+    std::mutex genome_mutex;
 private:
     int chrnum;
     char* chrnote[MAX_CHROSOME_NUM];
