@@ -31,7 +31,7 @@ int countKmerFrequence(Count_Map& kmer_map,std::string filename,int k=LENGTH_KME
 		seqLen+=strlen(pStr);
 	}
 	return seqLen;
-}
+}//计算并返回一个特定基因组序列中所有 k-mer 的频率。
 void kmer_counter(char* pStr,Count_Map& kmer_map,int k){
 	int len=(int)std::strlen(pStr);
 	for(int i=0;i<len-k;i++){
@@ -42,7 +42,7 @@ void kmer_counter(char* pStr,Count_Map& kmer_map,int k){
 			kmer_map[key]=1;
 		}
 	}
-}
+}//kmer_counter 函数
 void outputMap(Count_Map& tpmap,Count_Map& fpmap, std::fstream& output, int seqlenTp, int seqlenFP){
 	std::string key;
 	output <<"seqlenTp:"<<seqlenTp<<std::endl;
@@ -68,13 +68,16 @@ void outputMap(Count_Map& tpmap,Count_Map& fpmap, std::fstream& output, int seql
 		score2=log2((0.001)/fpmap[key]);
 		output<<it->first <<"\t"<<score1<<"\t"<<score2<<"\t"<<0<<"\t"<<it->second<<std::endl;
 	}
-}
+}//outputMap 函数输出两个 k-mer 映射（代表真阳性和假阳性）的比较结果。
 void patternLearning(std::string tpfilename,std::string fpfilename,std::fstream& output){
 	int seqLenTP,seqLenFP;
 	Count_Map tpMap, fpMap;
 	seqLenTP=countKmerFrequence(tpMap, tpfilename);
 	seqLenFP=countKmerFrequence(fpMap, fpfilename);
 	outputMap(tpMap,fpMap,output, seqLenTP, seqLenFP);
-}
+}//patternLearning 函数
 
 #endif /* pattern_learning_h */
+
+
+
