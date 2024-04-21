@@ -365,7 +365,7 @@ bool remove_duplicate_seed(Seed_set& tset) {
     return true;
 }
 // Collapse adjacent seeds and check their tsd.
-bool collapse_seed(Seed_set& tset, char* pchr) {
+bool collapse_seed(Seed_set& tset, char* pchr) {//就是在合并种子 有错配+无错位的 两个无错配的
     // Collapse adjacent seeds.
     Seed tmp1,tmp2,one,two(2);
     Seed_set::iterator sit,it=tset.begin();
@@ -424,31 +424,102 @@ bool mite_finder(Seed_set& seedset, char* pChr, bool disable_mismatch, int fragL
 }
 
 
-bool filter_low_score_candidates(Seed_set& seedset,
-                                 char* pChr,
-                                 Pattern_map& pattern_map,
-                                 double threshold
-                                 ){
+// bool filter_low_score_candidates(Seed_set& seedset,
+//                                  char* pChr,
+//                                  Pattern_map& pattern_map,
+//                                  double threshold
+//                                  ){
+//     std::string pattern;
+//     Seed_set::iterator it=seedset.begin();
+//     while(it!=seedset.end()){
+//         double score=0.0;
+//         int end=it->pos4-LENGTH_PATTERN+1;
+//         for(int i=it->pos1;i<=end;i++){
+//             pattern=std::string(pChr+i,LENGTH_PATTERN);
+//             if(pattern_map.find(pattern)!=pattern_map.end()){
+//                 score=score+pattern_map.at(pattern).score1;
+//             }
+//         }
+//         score=score/(it->pos4 - it->pos1 -LENGTH_PATTERN +2);
+//         if(score<threshold){
+//             it=seedset.erase(it);
+//         }
+//         else{
+//             it->ave_score=score;
+//             it++;
+//         }
+//     }
+//     return true;
+// }
+void processSubSet(const Seed_set::iterator& start, const Seed_set::iterator& end,
+                   char* pChr, const Pattern_map& pattern_map, double threshold,
+                   std::vector<Seed_set::iterator>& local_delete_list) {
     std::string pattern;
-    Seed_set::iterator it=seedset.begin();
-    while(it!=seedset.end()){
-        double score=0.0;
-        int end=it->pos4-LENGTH_PATTERN+1;
-        for(int i=it->pos1;i<=end;i++){
-            pattern=std::string(pChr+i,LENGTH_PATTERN);
-            if(pattern_map.find(pattern)!=pattern_map.end()){
-                score=score+pattern_map.at(pattern).score1;
+    // std::cout << "Thread started processing." << std::endl;
+    for (auto it = start; it != end; ++it) {
+        double score = 0.0;
+        int count = 0;
+        int endPos = it->pos4 - LENGTH_PATTERN + 1;
+        for (int i = it->pos1; i <= endPos; ++i) {
+            pattern = std::string(pChr + i, LENGTH_PATTERN);
+            auto find_it = pattern_map.find(pattern);
+            if (find_it != pattern_map.end()) {
+                score += find_it->second.score1;
+                ++count;
             }
         }
-        score=score/(it->pos4 - it->pos1 -LENGTH_PATTERN +2);
-        if(score<threshold){
-            it=seedset.erase(it);
-        }
-        else{
-            it->ave_score=score;
-            it++;
+        if (count > 0) {
+            double avgScore = score / count;
+            if (avgScore < threshold) {
+                local_delete_list.push_back(it);
+               //  std::cout << "Marked for deletion." << std::endl;
+            } else {
+                it->ave_score = avgScore;
+            }
+        }//std::cout << "Finished processing seed." << std::endl;
+    }  //std::cout << "Thread finished processing." << std::endl;
+}
+bool filter_low_score_candidates_mt(Seed_set& seedset,
+                                    char* pChr,
+                                    const Pattern_map& pattern_map,
+                                    double threshold) {
+    int num_threads = std::thread::hardware_concurrency(); // 获取系统支持的并行线程数
+    std::vector<std::thread> threads;
+    std::vector<std::vector<Seed_set::iterator>> to_delete(num_threads);
+
+    auto it = seedset.begin();
+    size_t chunk_size = seedset.size() / num_threads;
+
+    for (int i = 0; i < num_threads; ++i) {
+        auto last = (i == num_threads - 1) ? seedset.end() : std::next(it, chunk_size);
+        threads.emplace_back(processSubSet, it, last, pChr, std::cref(pattern_map), threshold, std::ref(to_delete[i]));
+        it = last;
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
+
+    // Consolidate deletion lists and remove entries
+try {
+    for (const auto& del_list : to_delete) {
+        for (const auto& del_it : del_list) {
+            if (del_it != seedset.end()) {  // 确保迭代器有效
+                seedset.erase(del_it);
+                //std::cout << "Deleted an item." << std::endl;
+            } else {
+                //std::cerr << "Attempted to delete using an invalid iterator." << std::endl;
+            }
         }
     }
+   // std::cout << "Deletion process completed." << std::endl;
+} catch (const std::exception& e) {
+    std::cerr << "Exception occurred during deletion: " << e.what() << std::endl;
+} catch (...) {
+    std::cerr << "An unknown exception occurred during deletion." << std::endl;
+}
+
     return true;
 }
+
 #endif /* mite_finder_h */
