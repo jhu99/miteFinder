@@ -21,11 +21,17 @@
 #include "genome.h"
 #include <mutex>
 #include <thread>
+#include <chrono>
+#include <map>
 // Hash map for kmer index.
 typedef std::unordered_map<std::string,std::vector<int>*> Tir_map;
 // Data type for a set of seeds detected from chromosomes.
 typedef std::list<Seed> Seed_set;
 typedef std::unordered_map<std::string, Pattern_value> Pattern_map;
+
+std::mutex global_map_mutex; 
+int num_threads0=8;
+int num_threads=16;
 
 bool clearMap(Tir_map& tmap) {
   for(auto it=tmap.begin();it!=tmap.end();++it){
@@ -96,31 +102,6 @@ bool inverse_repeat(std::string& invkey,std::string key) {
 }
 
 
-// bool build_kmer_index(Tir_map& tirmap,
-//                       std::string& fragment,
-//                       int pos,
-//                       int k=10)
-// {
-//     int len=(int)fragment.length();
-//     if(len<k) return false;
-//     for(int i=0;i<=len-k;i++)
-//     {
-//         std::string key=fragment.substr(i,k);
-//         if(key.find_first_of('N')!=std::string::npos)
-//             continue;
-//         if(tirmap.find(key)!=tirmap.end())
-//         {
-//             tirmap.at(key)->push_back(pos+i);
-//         }
-//         else
-//         {
-//             tirmap[key]=new std::vector<int>();
-//             tirmap.at(key)->push_back(pos+i);
-//         }
-//     }
-//     return true;
-// }
-
 void build_kmer_index_thread(Tir_map& local_tmap, const std::string& fragment, int pos, int k) {
     int len = fragment.length();
     for (int i = 0; i <= len - k; i++) {
@@ -136,14 +117,14 @@ void build_kmer_index_thread(Tir_map& local_tmap, const std::string& fragment, i
 }
 
 void build_kmer_index_parallel(Tir_map& global_tmap, const std::string& sequence, int k) {
-    int num_threads = std::thread::hardware_concurrency();
+ 
     std::vector<std::thread> threads;
-    std::vector<Tir_map> local_maps(num_threads);
-    int chunk_size = (sequence.length() / num_threads) / k * k; // Ensure that we are cutting off at k-mer boundaries
+    std::vector<Tir_map> local_maps(num_threads0);
+    int chunk_size = (sequence.length() / num_threads0) / k * k; // Ensure that we are cutting off at k-mer boundaries
 
-    for (int i = 0; i < num_threads; ++i) {
+    for (int i = 0; i < num_threads0; ++i) {
         int start = i * chunk_size;
-        int end = (i == num_threads - 1) ? sequence.length() : (start + chunk_size);
+        int end = (i == num_threads0 - 1) ? sequence.length() : (start + chunk_size);
         std::string fragment = sequence.substr(start, end - start);
         threads.emplace_back(build_kmer_index_thread, std::ref(local_maps[i]), fragment, start, k);
     }
@@ -163,19 +144,11 @@ void build_kmer_index_parallel(Tir_map& global_tmap, const std::string& sequence
             }
         }
     }
+   
+
 }
 
-// void printKmerIndex(const Tir_map& tmap) {
-//     for (const auto& entry : tmap) {
-//         const std::string& kmer = entry.first;
-//         const std::vector<int>* positions = entry.second;
-//         std::cout << "K-mer: " << kmer << " - Positions: ";
-//         for (int pos : *positions) {
-//             std::cout << pos << " ";
-//         }
-//         std::cout << std::endl;
-//     }
-// }
+
 
 bool search_seed(std::vector<int>* v1, std::vector<int>* v2, Seed_set& seedset, int mis_tir, int mis_tirpos, int k, std::mutex& seed_set_mutex) {
     std::vector<int>::iterator i1, i2;
@@ -193,7 +166,7 @@ bool search_seed(std::vector<int>* v1, std::vector<int>* v2, Seed_set& seedset, 
             } else {
                 if ((p1 - p2) > (MAX_LENGTH_MITE - k)) continue;
                 {
-                    std::lock_guard<std::mutex> guard(seed_set_mutex);
+                  std::lock_guard<std::mutex> guard(seed_set_mutex);
                     seedset.push_back(Seed(p2, p2 + k - 1, p1, p1 + k - 1, mis_tir, p2 + k - 1 - mis_tirpos));
                 }
             }
@@ -202,24 +175,25 @@ bool search_seed(std::vector<int>* v1, std::vector<int>* v2, Seed_set& seedset, 
     return true;
 }
 
-
+ 
 void process_kmer_submap(Tir_map& tmap, Tir_map::iterator start, Tir_map::iterator end, Seed_set& tset, int k, bool disable_mismatch, std::mutex& seed_set_mutex) {
+ 
 
     std::string key,invkey,standinvkey;
     std::vector<int> *v1,*v2;
     std::unordered_map<std::string, bool> record_map;
-    for(auto it=tmap.begin();it!=tmap.end();++it)
+   for(auto it=start;it!=end;++it)
     {
         key=it->first;
         standinvkey.clear();
         if(!inverse_repeat(standinvkey,key))continue;
         if(tmap.find(standinvkey)!=tmap.end()){
             if(check_repeat_stretch(key))continue;
-            //std::lock_guard<std::mutex> guard(seed_set_mutex);
+           // std::lock_guard<std::mutex> guard(seed_set_mutex);// 使用锁保护共享数据
             v1=it->second;
             v2=tmap.at(standinvkey);
 
-            search_seed(v1,v2,tset,0,0,k,seed_set_mutex);
+            search_seed(v1,v2,tset,0,0,10,seed_set_mutex);
         }
         if(!disable_mismatch)
         {
@@ -236,35 +210,37 @@ void process_kmer_submap(Tir_map& tmap, Tir_map::iterator start, Tir_map::iterat
                 }
                 v1=it->second;
                 v2=tmap.at(invkey);
-               // std::lock_guard<std::mutex> guard(seed_set_mutex);
-                search_seed(v1,v2,tset,1,j,k,seed_set_mutex);
+               // std::lock_guard<std::mutex> guard(seed_set_mutex);// 使用锁保护共享数据
+                search_seed(v1,v2,tset,1,j,10,seed_set_mutex);
                 invkey[j]=standinvkey[j];
             }
         }
     }
+    
 }
 
 
 
 bool extract_seed_from_map_parallel(Tir_map& tmap, Seed_set& tset, int k, bool disable_mismatch) {
-    int num_threads = std::thread::hardware_concurrency();  // 获取系统支持的并行线程数
+ 
     std::vector<std::thread> threads;
     std::mutex seed_set_mutex;
+ 
     auto it = tmap.begin();
     size_t map_size = tmap.size();
     size_t chunk_size = map_size / num_threads;  // 计算每个线程的基本块大小
-
+     Seed_set local_tset[num_threads];
     for (int i = 0; i < num_threads; ++i) {
         auto start = std::next(it, i * chunk_size);
         auto end = (i < num_threads - 1) ? std::next(start, chunk_size) : tmap.end();
-
-      //  std::cout << "Thread " << i << " processing range: " << std::distance(tmap.begin(), start) << " to " << std::distance(tmap.begin(), end) << std::endl;
-
-        threads.emplace_back(process_kmer_submap, std::ref(tmap), start, end, std::ref(tset), k, disable_mismatch, std::ref(seed_set_mutex));
+        threads.emplace_back(process_kmer_submap, std::ref(tmap), start, end, std::ref(local_tset[i]), k, disable_mismatch, std::ref(seed_set_mutex));
     }
 
     for (auto& thread : threads) {
         thread.join();
+    }
+    for (auto& local_set : local_tset) {
+        tset.splice(tset.end(), local_set);
     }
 
     return true;
@@ -403,20 +379,26 @@ bool collapse_seed(Seed_set& tset, char* pchr) {//就是在合并种子 有错�
     return true;
 }
 
+
 bool mite_finder(Seed_set& seedset, char* pChr, bool disable_mismatch, int fragLen, int k) {
     int len = std::strlen(pChr);
     Tir_map global_tmap; // 全局 TIR map
     char* pCurr = pChr;
-    
+  
     std::string sequence(pChr, pChr + len); // 将整个字符数组转换为字符串
-    //Tir_map global_tmap; // 全局 TIR map
+
 
     // 使用并行方式构建 k-mer 索引
+   
     build_kmer_index_parallel(global_tmap, sequence, k);
-    // 使用全局 tmap 进行种子的提取
-    extract_seed_from_map_parallel(global_tmap, seedset, k, disable_mismatch);
-    clearMap(global_tmap);
 
+    extract_seed_from_map_parallel(global_tmap, seedset, k, disable_mismatch);
+ 
+    
+    // 计算时间差（以毫秒为单位）
+
+    // 输出函数运行时间
+    clearMap(global_tmap);
     seedset.sort();
     remove_duplicate_seed(seedset);
     collapse_seed(seedset, pChr);
@@ -424,33 +406,6 @@ bool mite_finder(Seed_set& seedset, char* pChr, bool disable_mismatch, int fragL
 }
 
 
-// bool filter_low_score_candidates(Seed_set& seedset,
-//                                  char* pChr,
-//                                  Pattern_map& pattern_map,
-//                                  double threshold
-//                                  ){
-//     std::string pattern;
-//     Seed_set::iterator it=seedset.begin();
-//     while(it!=seedset.end()){
-//         double score=0.0;
-//         int end=it->pos4-LENGTH_PATTERN+1;
-//         for(int i=it->pos1;i<=end;i++){
-//             pattern=std::string(pChr+i,LENGTH_PATTERN);
-//             if(pattern_map.find(pattern)!=pattern_map.end()){
-//                 score=score+pattern_map.at(pattern).score1;
-//             }
-//         }
-//         score=score/(it->pos4 - it->pos1 -LENGTH_PATTERN +2);
-//         if(score<threshold){
-//             it=seedset.erase(it);
-//         }
-//         else{
-//             it->ave_score=score;
-//             it++;
-//         }
-//     }
-//     return true;
-// }
 void processSubSet(const Seed_set::iterator& start, const Seed_set::iterator& end,
                    char* pChr, const Pattern_map& pattern_map, double threshold,
                    std::vector<Seed_set::iterator>& local_delete_list) {
@@ -483,7 +438,7 @@ bool filter_low_score_candidates_mt(Seed_set& seedset,
                                     char* pChr,
                                     const Pattern_map& pattern_map,
                                     double threshold) {
-    int num_threads = std::thread::hardware_concurrency(); // 获取系统支持的并行线程数
+
     std::vector<std::thread> threads;
     std::vector<std::vector<Seed_set::iterator>> to_delete(num_threads);
 
@@ -522,4 +477,5 @@ try {
     return true;
 }
 
-#endif /* mite_finder_h */
+#endif
+/* mite_finder_h */
