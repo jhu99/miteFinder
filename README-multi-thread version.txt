@@ -2,5 +2,7 @@
 
 ./miteFinder -input GCA_001433935.1.fasta -output output.txt -pattern_scoring pattern_scoring.txt -threshold 0
 
+You can use 'txt to bed formats' python script to convert the results into BED format.
+
 this is the link to download dataset ：https://www.ebi.ac.uk/ena/browser/api/fasta/GCA_001433935.1?download=true&gzip=true
 You can test using only sequence0 from the dataset.
