@@ -13,6 +13,7 @@ private:
   std::vector<int> sizeChrom;
   // maximum bases for a line
   int maxLength;
+  
   // Number of chromosomes
   int numChrom;
 public:
@@ -23,6 +24,13 @@ public:
   void readSequence(std::string);
   int getNumChrom();
   char* getChrom(int);
+  void readChromosomeSequence2(const std::string& filepath, int startPos, int endPos, int index);
+  // std::vector<char*> vecChrom; 
+private:
+
+    // 假定 startPos 和 endPos 已经在类中声明
+    std::vector<int> startPos; // 每个染色体序列的起始位置
+    std::vector<int> endPos; // 每个染色体序列的结束位置
 };
 
 #endif

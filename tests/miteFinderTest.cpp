@@ -13,6 +13,7 @@
 #include "mite_finder.h"
 #include "pattern_scoring.h"
 #include "argparser.h"
+#include <thread>
 
 struct Option{
     std::string inputfilename;
@@ -32,7 +33,10 @@ int main(int argc, const char * argv[]) {
     ArgParser mf_parser;
     Option mf_option;
     Genome osgenome;
-    
+   // unsigned num_threads = std::thread::hardware_concurrency();
+   // std::cout << "Number of concurrent threads supported: " << num_threads << std::endl;
+
+
     // Parser the argument.
     mf_parser.setName("MiteFinder", "An application for detecting miniature inverted-repeat transposable elements on a genome-wide scale.");
     mf_parser.setVerion("1.0.006");
@@ -62,7 +66,7 @@ int main(int argc, const char * argv[]) {
     for(int i=0;i<numChr;i++) {
         char* pchr=osgenome.getChrom(i);
 		mite_finder(tset,pchr,mf_option.disable_mismatch,mf_option.fragnment_length,MIN_LENGTH_TIR);
-        filter_low_score_candidates(tset,pchr,pattern_map,mf_option.threshold);
+        filter_low_score_candidates_mt(tset,pchr,pattern_map,mf_option.threshold);
         std::cout << "#Sequence "<<i <<": "<< tset.size() <<std::endl;
         write_seed(tset,pchr,output,i+1);
         tset.clear();
